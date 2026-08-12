@@ -2,16 +2,10 @@
 // TideSense API Service Layer
 // =============================================================================
 // This file centralizes ALL API calls in one place.
-// Think of it like a "repository" or "service" layer in backend architecture:
-//   - Controller (React component) -> Service (this file) -> External API (FastAPI)
 //
-// WHY centralize?
-//   1. If the API URL changes, you update ONE file, not 20 components.
-//   2. All error handling, auth headers, and response parsing live here.
-//   3. Components stay clean — they just call functions and render data.
-//
-// IMPORTANT: We use plain fetch() — no Redux, no Zustand, no TanStack Query.
-// For a one-day hackathon build, fetch() is perfectly sufficient.
+// MOCK MODE TOGGLE:
+// If VITE_USE_MOCK=true in your .env file, this file returns mock data.
+// If VITE_USE_MOCK=false, this file makes REAL fetch() calls to the backend.
 // =============================================================================
 
 import type {
@@ -23,31 +17,29 @@ import type {
   Profile,
 } from '../types';
 
-// Read the API base URL from environment variables.
-// In Vite, env vars prefixed with VITE_ are exposed to the client.
-// This is set in the .env file: VITE_API_URL=http://localhost:8000
-// NEVER hardcode URLs — this makes switching between dev/staging/prod trivial.
+import {
+  mockBeaches,
+  mockAlerts,
+  mockDashboard,
+  mockUser,
+  mockProfile,
+  mockReports,
+} from './mockData';
+
+// Get environment variables
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const USE_MOCK = import.meta.env.VITE_USE_MOCK === 'true';
+
+// Simulated network delay for mock mode
+const delay = (ms: number) => new Promise(resolve => setTimeout(resolve, ms));
 
 // -----------------------------------------------------------------------------
-// Helper: Get the stored JWT token from localStorage
-// -----------------------------------------------------------------------------
-// localStorage is like a simple key-value store in the browser.
-// Think of it as a tiny database that persists across page refreshes.
-// We store the JWT here after login so every subsequent request can include it.
-// NOTE: In production, you'd use httpOnly cookies for security. localStorage
-// is fine for a hackathon prototype.
+// Real Fetch Helpers
 // -----------------------------------------------------------------------------
 function getToken(): string | null {
   return localStorage.getItem('token');
 }
 
-// -----------------------------------------------------------------------------
-// Helper: Build request headers
-// -----------------------------------------------------------------------------
-// Similar to how your FastAPI middleware reads the Authorization header,
-// we attach the JWT token to every authenticated request.
-// -----------------------------------------------------------------------------
 function authHeaders(): HeadersInit {
   const token = getToken();
   const headers: HeadersInit = { 'Content-Type': 'application/json' };
@@ -57,13 +49,6 @@ function authHeaders(): HeadersInit {
   return headers;
 }
 
-// -----------------------------------------------------------------------------
-// Helper: Handle API responses
-// -----------------------------------------------------------------------------
-// This is like a middleware that checks the HTTP status code before
-// passing the response body to the calling function.
-// If the status is not OK (2xx), we throw an error that the component can catch.
-// -----------------------------------------------------------------------------
 async function handleResponse<T>(response: Response): Promise<T> {
   if (!response.ok) {
     const errorData = await response.json().catch(() => ({}));
@@ -76,8 +61,12 @@ async function handleResponse<T>(response: Response): Promise<T> {
 // AUTH ENDPOINTS
 // =============================================================================
 
-/** POST /api/auth/login — Authenticate user and receive JWT */
 export async function login(email: string, password: string): Promise<AuthResponse> {
+  if (USE_MOCK) {
+    await delay(800);
+    return { access_token: 'mock-jwt-token-123', token_type: 'bearer', user: { ...mockUser, email } };
+  }
+  
   const response = await fetch(`${API_URL}/api/auth/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -86,12 +75,12 @@ export async function login(email: string, password: string): Promise<AuthRespon
   return handleResponse<AuthResponse>(response);
 }
 
-/** POST /api/auth/register — Create a new user account */
-export async function register(
-  name: string,
-  email: string,
-  password: string
-): Promise<AuthResponse> {
+export async function register(name: string, email: string, password: string): Promise<AuthResponse> {
+  if (USE_MOCK) {
+    await delay(800);
+    return { access_token: 'mock-jwt-token-123', token_type: 'bearer', user: { ...mockUser, name, email } };
+  }
+
   const response = await fetch(`${API_URL}/api/auth/register`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -100,8 +89,14 @@ export async function register(
   return handleResponse<AuthResponse>(response);
 }
 
-/** GET /api/auth/me — Verify current token and get user info */
 export async function getCurrentUser(): Promise<{ user: { id: number; name: string; email: string; role: string } }> {
+  if (USE_MOCK) {
+    await delay(300);
+    const token = localStorage.getItem('token');
+    if (!token) throw new Error('No token');
+    return { user: mockUser as any };
+  }
+
   const response = await fetch(`${API_URL}/api/auth/me`, {
     headers: authHeaders(),
   });
@@ -112,23 +107,27 @@ export async function getCurrentUser(): Promise<{ user: { id: number; name: stri
 // BEACH ENDPOINTS (Public)
 // =============================================================================
 
-/** GET /api/beaches — Fetch all beaches with basic safety info */
 export async function getBeaches(): Promise<Beach[]> {
+  if (USE_MOCK) {
+    await delay(600);
+    return mockBeaches;
+  }
+
   const response = await fetch(`${API_URL}/api/beaches`, {
     headers: { 'Content-Type': 'application/json' },
   });
   return handleResponse<Beach[]>(response);
 }
 
-/** GET /api/beaches/{id}/dashboard?activity={activity} — Full beach dashboard */
-export async function getBeachDashboard(
-  beachId: number,
-  activity: string = 'swimming'
-): Promise<DashboardResponse> {
-  const response = await fetch(
-    `${API_URL}/api/beaches/${beachId}/dashboard?activity=${activity}`,
-    { headers: { 'Content-Type': 'application/json' } }
-  );
+export async function getBeachDashboard(beachId: number, activity: string = 'swimming'): Promise<DashboardResponse> {
+  if (USE_MOCK) {
+    await delay(600);
+    return mockDashboard(beachId, activity);
+  }
+
+  const response = await fetch(`${API_URL}/api/beaches/${beachId}/dashboard?activity=${activity}`, { 
+    headers: { 'Content-Type': 'application/json' } 
+  });
   return handleResponse<DashboardResponse>(response);
 }
 
@@ -136,31 +135,40 @@ export async function getBeachDashboard(
 // ALERT ENDPOINTS (Public read, Authority write)
 // =============================================================================
 
-/** GET /api/alerts — Fetch all active alerts */
 export async function getAlerts(): Promise<Alert[]> {
+  if (USE_MOCK) {
+    await delay(400);
+    return mockAlerts;
+  }
+
   const response = await fetch(`${API_URL}/api/alerts`, {
     headers: { 'Content-Type': 'application/json' },
   });
   return handleResponse<Alert[]>(response);
 }
 
-/** GET /api/alerts/{id} — Fetch a single alert by ID */
 export async function getAlertById(alertId: number): Promise<Alert> {
+  if (USE_MOCK) {
+    await delay(400);
+    const alert = mockAlerts.find(a => a.id === alertId);
+    if (!alert) throw new Error('Alert not found');
+    return alert;
+  }
+
   const response = await fetch(`${API_URL}/api/alerts/${alertId}`, {
     headers: { 'Content-Type': 'application/json' },
   });
   return handleResponse<Alert>(response);
 }
 
-/** POST /api/alerts — Create a new alert (Authority only) */
-export async function createAlert(alertData: {
-  beach_id: number;
-  alert_type: string;
-  severity: string;
-  title: string;
-  message: string;
-  expires_at?: string;
-}): Promise<Alert> {
+export async function createAlert(alertData: any): Promise<Alert> {
+  if (USE_MOCK) {
+    await delay(800);
+    const newAlert = { ...alertData, id: Math.floor(Math.random() * 1000), status: 'ACTIVE', created_at: new Date().toISOString() };
+    mockAlerts.push(newAlert);
+    return newAlert;
+  }
+
   const response = await fetch(`${API_URL}/api/alerts`, {
     method: 'POST',
     headers: authHeaders(),
@@ -173,14 +181,14 @@ export async function createAlert(alertData: {
 // REPORT ENDPOINTS
 // =============================================================================
 
-/** POST /api/reports — Submit a new report (authenticated users) */
-export async function submitReport(reportData: {
-  beach_id: number;
-  issue_type: string;
-  description: string;
-  latitude?: number;
-  longitude?: number;
-}): Promise<Report> {
+export async function submitReport(reportData: any): Promise<Report> {
+  if (USE_MOCK) {
+    await delay(800);
+    const newReport = { ...reportData, id: Math.floor(Math.random() * 1000), status: 'PENDING', created_at: new Date().toISOString() };
+    mockReports.push(newReport);
+    return newReport;
+  }
+
   const response = await fetch(`${API_URL}/api/reports`, {
     method: 'POST',
     headers: authHeaders(),
@@ -189,19 +197,27 @@ export async function submitReport(reportData: {
   return handleResponse<Report>(response);
 }
 
-/** GET /api/reports — Fetch all reports (Authority) */
 export async function getReports(): Promise<Report[]> {
+  if (USE_MOCK) {
+    await delay(500);
+    return mockReports;
+  }
+
   const response = await fetch(`${API_URL}/api/reports`, {
     headers: authHeaders(),
   });
   return handleResponse<Report[]>(response);
 }
 
-/** PUT /api/reports/{id} — Update report status (Authority verify/reject) */
-export async function updateReportStatus(
-  reportId: number,
-  status: 'VERIFIED' | 'REJECTED'
-): Promise<Report> {
+export async function updateReportStatus(reportId: number, status: 'VERIFIED' | 'REJECTED'): Promise<Report> {
+  if (USE_MOCK) {
+    await delay(500);
+    const report = mockReports.find(r => r.id === reportId);
+    if (!report) throw new Error('Report not found');
+    report.status = status;
+    return report;
+  }
+
   const response = await fetch(`${API_URL}/api/reports/${reportId}`, {
     method: 'PUT',
     headers: authHeaders(),
@@ -214,16 +230,25 @@ export async function updateReportStatus(
 // PROFILE ENDPOINTS
 // =============================================================================
 
-/** GET /api/users/me — Get current user's profile */
 export async function getProfile(): Promise<Profile> {
+  if (USE_MOCK) {
+    await delay(500);
+    return mockProfile;
+  }
+
   const response = await fetch(`${API_URL}/api/users/me`, {
     headers: authHeaders(),
   });
   return handleResponse<Profile>(response);
 }
 
-/** PUT /api/users/me — Update current user's profile */
 export async function updateProfile(profileData: Partial<Profile>): Promise<Profile> {
+  if (USE_MOCK) {
+    await delay(800);
+    Object.assign(mockProfile, profileData);
+    return mockProfile;
+  }
+
   const response = await fetch(`${API_URL}/api/users/me`, {
     method: 'PUT',
     headers: authHeaders(),
@@ -236,8 +261,12 @@ export async function updateProfile(profileData: Partial<Profile>): Promise<Prof
 // ADMIN ENDPOINTS (Authority only)
 // =============================================================================
 
-/** POST /api/admin/sync/all — Trigger data refresh from all external sources */
 export async function refreshData(): Promise<{ message: string }> {
+  if (USE_MOCK) {
+    await delay(1500);
+    return { message: 'Data successfully synced from INCOIS and Open-Meteo.' };
+  }
+
   const response = await fetch(`${API_URL}/api/admin/sync/all`, {
     method: 'POST',
     headers: authHeaders(),
