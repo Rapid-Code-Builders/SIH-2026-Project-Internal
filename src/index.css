@@ -1,0 +1,139 @@
+/* =============================================================================
+ * TideSense Global Styles
+ * =============================================================================
+ * This is the main CSS entry point for the application.
+ *
+ * TAILWIND CSS EXPLAINED FOR BACKEND DEVS:
+ * Tailwind is a "utility-first" CSS framework. Instead of writing custom CSS
+ * classes like '.my-button { background: blue; padding: 10px; }', you apply
+ * small utility classes directly in your HTML/JSX:
+ *   <button className="bg-blue-500 p-2.5">Click me</button>
+ *
+ * The '@import "tailwindcss"' directive below loads Tailwind's entire
+ * utility system. Tailwind then scans your source files and generates
+ * only the CSS classes you actually use — keeping the bundle small.
+ *
+ * WHY NOT REGULAR CSS?
+ * For a one-day hackathon, Tailwind is dramatically faster than writing
+ * custom CSS. You style directly where the HTML lives, reducing the
+ * context-switching between files.
+ * ========================================================================== */
+
+/* Import Tailwind CSS v4 — this single import gives us all utilities */
+@import "tailwindcss";
+
+/* =============================================================================
+ * Custom Theme Variables
+ * =============================================================================
+ * These CSS custom properties (variables) define TideSense's design tokens.
+ * They're referenced throughout the app for consistency.
+ * Think of them like constants in your Python config file.
+ * ========================================================================== */
+
+:root {
+  /* === Color Palette: Dark Navy Coastal Theme === */
+  --color-ts-bg: #07111F;
+  --color-ts-surface: #0D1B2A;
+  --color-ts-elevated: #13263A;
+  --color-ts-border: #20364A;
+
+  /* === Accent Colors === */
+  --color-ts-cyan: #22D3EE;
+  --color-ts-teal: #2DD4BF;
+  --color-ts-blue: #3B82F6;
+
+  /* === Status Colors === */
+  --color-ts-safe: #34D399;
+  --color-ts-caution: #FBBF24;
+  --color-ts-unsafe: #F87171;
+}
+
+/* =============================================================================
+ * Base Styles
+ * =============================================================================
+ * These apply globally to the entire document.
+ * 'antialiased' makes text rendering smoother on modern displays.
+ * ========================================================================== */
+
+* {
+  margin: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: #07111F;
+  color: #E2E8F0;              /* slate-200 — default text color for readability */
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  min-height: 100vh;
+}
+
+/* =============================================================================
+ * Scrollbar Styling
+ * =============================================================================
+ * Custom scrollbar to match the dark theme. Without this, you get the default
+ * white/gray scrollbar which looks jarring on a dark background.
+ * ========================================================================== */
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #07111F;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #20364A;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #2d4a66;
+}
+
+/* =============================================================================
+ * Leaflet Map Overrides
+ * =============================================================================
+ * The Leaflet map library has its own default styles. We override some of them
+ * here to match our dark theme. Without these, the map popups and controls
+ * would appear in Leaflet's default white theme.
+ * ========================================================================== */
+
+.leaflet-popup-content-wrapper {
+  background: #0D1B2A !important;
+  color: #E2E8F0 !important;
+  border: 1px solid #20364A !important;
+  border-radius: 12px !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4) !important;
+}
+
+.leaflet-popup-tip {
+  background: #0D1B2A !important;
+  border: 1px solid #20364A !important;
+}
+
+.leaflet-popup-close-button {
+  color: #94A3B8 !important;
+}
+
+/* =============================================================================
+ * Utility Animations
+ * ========================================================================== */
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.3s ease-out;
+}
