@@ -35,6 +35,7 @@ import AlertDetail from './pages/AlertDetail';
 import Report from './pages/Report';
 import Profile from './pages/Profile';
 import AuthorityDashboard from './pages/AuthorityDashboard';
+import NotFound from './pages/NotFound';
 
 // =============================================================================
 // PROTECTED ROUTE COMPONENT
@@ -174,8 +175,8 @@ export default function App() {
             }
           />
 
-          {/* Catch-all redirect */}
-          <Route path="*" element={<Navigate to="/dashboard" replace />} />
+          {/* Catch-all — styled 404 page */}
+          <Route path="*" element={<NotFound />} />
         </Routes>
       </main>
     </div>

@@ -49,6 +49,30 @@ export const mockBeaches: Beach[] = [
     water_quality: 'Good',
     crowd_level: 'Moderate',
   },
+  {
+    id: 5,
+    name: 'Palolem Beach',
+    location: 'South Goa, India',
+    latitude: 15.0100,
+    longitude: 74.0232,
+    status: 'SAFE',
+    safety_score: 88,
+    wave_height: 0.6,
+    water_quality: 'Good',
+    crowd_level: 'Moderate',
+  },
+  {
+    id: 6,
+    name: 'Juhu Beach',
+    location: 'Mumbai, Maharashtra',
+    latitude: 19.0988,
+    longitude: 72.8267,
+    status: 'CAUTION',
+    safety_score: 55,
+    wave_height: 1.8,
+    water_quality: 'Moderate',
+    crowd_level: 'High',
+  },
 ];
 
 export const mockAlerts: Alert[] = [
@@ -62,7 +86,7 @@ export const mockAlerts: Alert[] = [
     message: 'Extremely high tides and strong rip currents expected. Swimming is strictly prohibited.',
     instruction: 'Stay away from the water. Obey lifeguard instructions.',
     status: 'ACTIVE',
-    created_at: new Date().toISOString(),
+    created_at: new Date(Date.now() - 30 * 60 * 1000).toISOString(), // 30 min ago
     source: 'INCOIS',
   },
   {
@@ -72,27 +96,38 @@ export const mockAlerts: Alert[] = [
     title: 'Jellyfish Sighting',
     alert_type: 'MARINE_LIFE',
     severity: 'WARNING',
-    message: 'Multiple reports of jellyfish stings in the shallow waters.',
+    message: 'Multiple reports of jellyfish stings in the shallow waters near the northern end.',
+    instruction: 'Avoid wading in shallow water. Wear protective footwear.',
     status: 'ACTIVE',
-    created_at: new Date().toISOString(),
-  }
+    created_at: new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString(), // 2 hrs ago
+    source: 'Local Authority',
+  },
+  {
+    id: 3,
+    beach_id: 6,
+    beach_name: 'Juhu Beach',
+    title: 'Water Quality Advisory',
+    alert_type: 'WATER_QUALITY',
+    severity: 'INFO',
+    message: 'Elevated bacterial levels detected after recent rainfall. Water quality is being monitored.',
+    status: 'ACTIVE',
+    created_at: new Date(Date.now() - 5 * 60 * 60 * 1000).toISOString(), // 5 hrs ago
+    source: 'CPCB',
+  },
 ];
 
 export const mockDashboard = (beachId: number, activity: string): DashboardResponse => {
   const beach = mockBeaches.find(b => b.id === beachId) || mockBeaches[0];
   
-  // Create a slight variation in score so you can see the UI update!
-  // In reality, the backend's heavy Python weighting algorithm will calculate this.
+  // Activity-based score modifier (simulates backend weighting)
   let modifier = 0;
   if (activity === 'surfing') modifier = -10;
   if (activity === 'fishing') modifier = +5;
   if (activity === 'diving') modifier = -15;
 
-  // Ensure score stays between 0 and 100
   const finalScore = Math.max(0, Math.min(100, beach.safety_score + modifier));
   
-  // Adjust status based on new score
-  let finalStatus = beach.status;
+  let finalStatus: 'SAFE' | 'CAUTION' | 'UNSAFE' = 'CAUTION';
   if (finalScore >= 80) finalStatus = 'SAFE';
   else if (finalScore >= 50) finalStatus = 'CAUTION';
   else finalStatus = 'UNSAFE';
@@ -101,7 +136,7 @@ export const mockDashboard = (beachId: number, activity: string): DashboardRespo
     beach,
     safety_index: {
       score: finalScore,
-      status: finalStatus as 'SAFE' | 'CAUTION' | 'UNSAFE',
+      status: finalStatus,
       activity: activity,
     },
     conditions: [
@@ -109,16 +144,34 @@ export const mockDashboard = (beachId: number, activity: string): DashboardRespo
         category: 'weather',
         score: 85,
         status: 'SAFE',
-        details: { temperature: '28°C', wind_speed: '12 km/h' },
+        details: { temperature: '28°C', wind_speed: '12 km/h', humidity: '72%', uv_index: '6 (High)' },
         source: 'Open-Meteo',
+        last_updated: new Date().toISOString(),
       },
       {
         category: 'ocean',
         score: beach.status === 'UNSAFE' ? 30 : 70,
-        status: beach.status,
-        details: { wave_height: beach.wave_height + 'm', rip_current_risk: beach.status === 'UNSAFE' ? 'High' : 'Low' },
+        status: beach.status === 'UNSAFE' ? 'UNSAFE' : 'CAUTION',
+        details: { wave_height: beach.wave_height + 'm', rip_current_risk: beach.status === 'UNSAFE' ? 'High' : 'Low', tide: 'Rising', swell_period: '8s' },
         source: 'INCOIS',
-      }
+        last_updated: new Date().toISOString(),
+      },
+      {
+        category: 'water_quality',
+        score: beach.water_quality === 'Excellent' ? 95 : beach.water_quality === 'Good' ? 80 : 50,
+        status: beach.water_quality === 'Poor' ? 'UNSAFE' : 'SAFE',
+        details: { ph_level: '7.8', dissolved_oxygen: '6.2 mg/L', coliform_count: beach.water_quality === 'Poor' ? '520 CFU/100ml' : '85 CFU/100ml' },
+        source: 'CPCB',
+        last_updated: new Date().toISOString(),
+      },
+      {
+        category: 'crowd',
+        score: beach.crowd_level === 'Low' ? 95 : beach.crowd_level === 'Moderate' ? 70 : 40,
+        status: beach.crowd_level === 'High' ? 'CAUTION' : 'SAFE',
+        details: { estimated_visitors: beach.crowd_level === 'High' ? '~1,200' : '~350', lifeguards_on_duty: '3', congestion_zone: beach.crowd_level === 'High' ? 'Northern shore' : 'None' },
+        source: 'Crowd Sensor',
+        last_updated: new Date().toISOString(),
+      },
     ],
     alerts: mockAlerts.filter(a => a.beach_id === beachId && a.status === 'ACTIVE')
   };
@@ -137,6 +190,28 @@ export const mockProfile: Profile = {
   email: 'test@example.com',
   location: 'Mumbai, India',
   preferred_activity: 'swimming',
+  emergency_contact: '+91 98765 43210',
 };
 
-export const mockReports: Report[] = [];
+export const mockReports: Report[] = [
+  {
+    id: 101,
+    beach_id: 1,
+    beach_name: 'Baga Beach',
+    user_id: 1,
+    issue_type: 'rip_current',
+    description: 'Strong rip current spotted near the red flag zone on the northern end. Multiple swimmers were pulled out by lifeguards.',
+    status: 'PENDING',
+    created_at: new Date(Date.now() - 45 * 60 * 1000).toISOString(),
+  },
+  {
+    id: 102,
+    beach_id: 6,
+    beach_name: 'Juhu Beach',
+    user_id: 2,
+    issue_type: 'pollution',
+    description: 'Large amount of plastic debris and sewage smell near the southern walkway after the high tide.',
+    status: 'PENDING',
+    created_at: new Date(Date.now() - 3 * 60 * 60 * 1000).toISOString(),
+  },
+];

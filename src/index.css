@@ -137,3 +137,79 @@ body {
 .animate-fade-in {
   animation: fade-in 0.3s ease-out;
 }
+
+/* Slide up animation — used on cards */
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.4s ease-out;
+}
+
+/* Subtle pulse glow — used on live status indicators */
+@keyframes pulse-glow {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* =============================================================================
+ * Custom Leaflet Marker Styles
+ * ========================================================================== */
+.custom-leaflet-marker {
+  background: none !important;
+  border: none !important;
+}
+
+/* =============================================================================
+ * Dark Theme Select Dropdown Fix
+ * =============================================================================
+ * Native <select> dropdowns don't respect dark themes well.
+ * These rules ensure the dropdown options have dark backgrounds.
+ * ========================================================================== */
+select option {
+  background-color: #13263A;
+  color: #E2E8F0;
+  padding: 8px;
+}
+
+/* =============================================================================
+ * Line Clamp Utility
+ * ========================================================================== */
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.line-clamp-1 {
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* =============================================================================
+ * Focus Ring Utility (Accessibility)
+ * ========================================================================== */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible {
+  outline: 2px solid #22D3EE;
+  outline-offset: 2px;
+  border-radius: 8px;
+}
