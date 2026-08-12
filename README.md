@@ -1,4 +1,5 @@
-# CoastalGuard India 🌊
+# **Kinaara**
+CoastalGuard India 🌊
 
 **A safety-first recreational intelligence platform for India's coastline.**
 
