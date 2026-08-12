@@ -1,9 +1,9 @@
 # **Kinaara**
-CoastalGuard India 🌊
+Kinaara 🌊
 
 **A safety-first recreational intelligence platform for India's coastline.**
 
-CoastalGuard India (also referenced as *TideSense* in early planning docs) fuses government ocean, weather, and pollution data into a single **Beach Suitability Index (BSI)** — helping tourists know when a beach is actually safe to visit, and helping State Tourism Boards monitor conditions across their coastline. Built for the Smart India Hackathon (SIH) internal round.
+Kinaara fuses government ocean, weather, and pollution data into a single **Beach Suitability Index (BSI)** — helping tourists know when a beach is actually safe to visit, and helping State Tourism Boards monitor conditions across their coastline. Built for the Smart India Hackathon (SIH) internal round.
 
 ---
 
