@@ -113,7 +113,10 @@ export default function App() {
       />
 
       {/* Main content area */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 py-6">
+      <main
+        className="w-full px-4 sm:px-6 py-6"
+        style={{ maxWidth: '80rem', marginLeft: 'auto', marginRight: 'auto' }}
+      >
         <Routes>
           {/* =================================================================
             PUBLIC ROUTES — No login required

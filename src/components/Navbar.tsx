@@ -103,7 +103,10 @@ export default function Navbar({ isAuthenticated, userRole, userName, onLogout }
     // 'sticky top-0 z-50' makes it stick to the top of the viewport as user scrolls
     // 'backdrop-blur-xl' adds a frosted glass effect behind the navbar
     <nav className="sticky top-0 z-50 bg-[#0D1B2A]/80 backdrop-blur-xl border-b border-[#20364A]">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6">
+      <div 
+        className="w-full px-4 sm:px-6"
+        style={{ maxWidth: '80rem', marginLeft: 'auto', marginRight: 'auto' }}
+      >
         <div className="flex items-center justify-between h-16">
 
           {/* ---- LOGO SECTION ---- */}
