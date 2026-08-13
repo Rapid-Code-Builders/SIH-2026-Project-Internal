@@ -16,6 +16,7 @@ from app.routers.auth import router as auth_router
 from app.auth.dependencies import get_current_user
 from app.routers.reports import router as reports_router
 from app.routers.beaches import router as beaches_router
+from app.routers.dashboard import router as dashboard_router
 
 app = FastAPI(
     title="Kinaara API",
@@ -28,6 +29,7 @@ Base.metadata.create_all(bind=engine)
 app.include_router(auth_router)
 app.include_router(reports_router)
 app.include_router(beaches_router)
+app.include_router(dashboard_router)
 
 @app.get("/")
 def root():

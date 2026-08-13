@@ -140,18 +140,12 @@ def update_report_status(
             detail="Only authorities and admins can update report status"
         )
 
-    allowed_statuses = {
-        "PENDING",
-        "IN_REVIEW",
-        "RESOLVED",
-        "REJECTED"
+    allowed_transitions = {
+        "PENDING": {"IN_REVIEW"},
+        "IN_REVIEW": {"RESOLVED", "REJECTED"},
+        "RESOLVED": set(),
+        "REJECTED": set()
     }
-
-    if status_data.status not in allowed_statuses:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Invalid report status"
-        )
 
     report = (
         db.query(Report)
@@ -165,7 +159,21 @@ def update_report_status(
             detail="Report not found"
         )
 
-    report.status = status_data.status
+    new_status = status_data.status
+
+    if new_status not in allowed_transitions:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Invalid report status"
+        )
+
+    if new_status not in allowed_transitions[report.status]:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Cannot change status from {report.status} to {new_status}"
+        )
+
+    report.status = new_status
 
     db.commit()
     db.refresh(report)
