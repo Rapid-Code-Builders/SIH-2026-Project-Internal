@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Depends
 from sqlalchemy import text
 
 from app.database import Base, engine
@@ -12,6 +12,9 @@ from app.models import (
     Alert,
 )
 
+from app.routers.auth import router as auth_router
+from app.auth.dependencies import get_current_user
+
 app = FastAPI(
     title="Kinaara API",
     description="Backend API for the Kinaara coastal safety platform",
@@ -19,6 +22,8 @@ app = FastAPI(
 )
 
 Base.metadata.create_all(bind=engine)
+
+app.include_router(auth_router)
 
 @app.get("/")
 def root():
@@ -44,3 +49,12 @@ def database_test():
             "database": "connected",
             "result": result.scalar()
         }
+
+@app.get("/auth/me")
+def get_me(current_user: User = Depends(get_current_user)):
+    return {
+        "id": current_user.id,
+        "name": current_user.name,
+        "email": current_user.email,
+        "role": current_user.role
+    }

@@ -2,14 +2,13 @@ from pydantic_settings import BaseSettings
 
 
 class Settings(BaseSettings):
-    APP_NAME: str = "Kinaara API"
-    DEBUG: bool = True
+    app_name: str = "Kinaara API"
+    debug: bool = True
 
-    DATABASE_URL: str
+    database_url: str
 
-    JWT_SECRET: str
-    JWT_ALGORITHM: str = "HS256"
-    ACCESS_TOKEN_EXPIRE_MINUTES: int = 60
+    jwt_secret: str
+    access_token_expire_minutes: int = 60
 
     class Config:
         env_file = ".env"
