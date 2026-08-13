@@ -1,8 +1,8 @@
-# CoastalGuard India 🌊
+# Kinaara 🌊
 
 **A safety-first recreational intelligence platform for India's coastline.**
 
-CoastalGuard India (also referenced as *TideSense* in early planning docs) fuses government ocean, weather, and pollution data into a single **Beach Suitability Index (BSI)** — helping tourists know when a beach is actually safe to visit, and helping State Tourism Boards monitor conditions across their coastline. Built for the Smart India Hackathon (SIH) internal round.
+Kinaara (also referenced as *TideSense* in early planning docs) fuses government ocean, weather, and pollution data into a single **Beach Suitability Index (BSI)** — helping tourists know when a beach is actually safe to visit, and helping State Tourism Boards monitor conditions across their coastline. Built for the Smart India Hackathon (SIH) internal round.
 
 ---
 
@@ -53,7 +53,7 @@ BSI = (0.4 × Safety + 0.3 × WaterQuality + 0.2 × Weather + 0.1 × Crowd) / Σ
 ## Project Structure
 
 ```text
-coastalguard-india/
+Kinaara/
 ├── backend/          # FastAPI + MySQL REST API
 │   ├── app/
 │   │   ├── main.py
