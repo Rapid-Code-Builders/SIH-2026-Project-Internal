@@ -93,7 +93,7 @@ export default function App() {
       <div className="min-h-screen bg-[#07111F] flex items-center justify-center">
         <div className="flex flex-col items-center gap-3">
           <div className="w-8 h-8 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin" />
-          <p className="text-slate-400 text-sm">Loading TideSense...</p>
+          <p className="text-slate-400 text-sm">Loading Kinaara...</p>
         </div>
       </div>
     );

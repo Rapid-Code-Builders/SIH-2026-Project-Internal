@@ -1,5 +1,5 @@
 // =============================================================================
-// TideSense Login Page
+// Kinaara Login Page
 // =============================================================================
 //
 // WHAT THIS PAGE DOES:
@@ -7,29 +7,15 @@
 // POST /api/auth/login, receives a JWT token + user object, and stores them
 // in the AuthContext (which persists them to localStorage).
 //
-// REACT FORMS EXPLAINED FOR BACKEND DEVS:
-// In FastAPI, form data arrives as a request body that you parse once.
-// In React, form inputs are "controlled" — meaning React state is the
-// single source of truth, and the input always reflects that state.
-//
-// Flow:
-//   1. User types in input → onChange fires → setState updates the value
-//   2. React re-renders → input shows the new value
-//   3. User clicks Submit → onSubmit fires → we read the state values
-//   4. We call the API → on success, update auth context → navigate away
-//
-// This is different from traditional HTML forms where the browser collects
-// values and sends them. Here, JavaScript handles everything client-side.
-//
 // ROUTE: /login (Public)
 // API: POST /api/auth/login → { access_token, token_type, user }
 // =============================================================================
 
-import { useState, type FormEvent } from 'react';
+import { useState, useEffect, type FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Waves, Mail, Lock, Eye, EyeOff, Loader2 } from 'lucide-react';
+import { Waves, Mail, Lock, Eye, EyeOff, Loader2, KeyRound } from 'lucide-react';
 
-// useAuth gives us the login() function from AuthContext
+// useAuth gives us the login() function and isAuthenticated state from AuthContext
 import { useAuth } from '../context/AuthContext';
 
 // The API function that calls POST /api/auth/login
@@ -39,49 +25,61 @@ export default function Login() {
   // ---------------------------------------------------------------------------
   // FORM STATE
   // ---------------------------------------------------------------------------
-  // Each form field gets its own state variable. When the user types,
-  // we update the corresponding state, which updates the displayed value.
-  //
-  // ANALOGY: Think of these as variables in a Pydantic model:
-  //   class LoginForm(BaseModel):
-  //       email: str = ""
-  //       password: str = ""
-  // ---------------------------------------------------------------------------
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  // UI state — not related to the form data itself
-  const [showPassword, setShowPassword] = useState(false);   // Toggle password visibility
-  const [error, setError] = useState('');                     // Error message to display
-  const [isSubmitting, setIsSubmitting] = useState(false);    // Loading state during API call
+  // UI state
+  const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Get the login function from auth context and navigation function
-  const { login } = useAuth();
+  // Get auth context values and router navigation
+  const { login, isAuthenticated } = useAuth();
   const navigate = useNavigate();
+
+  // Redirect to dashboard if user is already logged in
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate('/dashboard', { replace: true });
+    }
+  }, [isAuthenticated, navigate]);
+
+  // Input change handlers (clears error on edit)
+  const handleEmailChange = (val: string) => {
+    setEmail(val);
+    if (error) setError('');
+  };
+
+  const handlePasswordChange = (val: string) => {
+    setPassword(val);
+    if (error) setError('');
+  };
+
+  // Helper to fill demo credentials easily
+  const handleQuickFill = (fillEmail: string, fillPass: string) => {
+    setEmail(fillEmail);
+    setPassword(fillPass);
+    if (error) setError('');
+  };
 
   // ---------------------------------------------------------------------------
   // FORM SUBMISSION HANDLER
   // ---------------------------------------------------------------------------
-  // This function runs when the user clicks "Sign In" or presses Enter.
-  //
-  // ANALOGY: This is like a FastAPI endpoint handler:
-  //   @app.post("/auth/login")
-  //   async def login(form: LoginForm):
-  //       user = authenticate(form.email, form.password)
-  //       if not user: raise HTTPException(401, "Invalid credentials")
-  //       return {"token": create_jwt(user)}
-  //
-  // The difference: this runs in the browser, not on the server.
-  // It CALLS your FastAPI endpoint and handles the response.
-  // ---------------------------------------------------------------------------
   const handleSubmit = async (e: FormEvent) => {
-    // Prevent the browser's default form submission (which would reload the page)
-    // In an SPA, we handle everything in JavaScript — no page reloads.
     e.preventDefault();
 
-    // Basic client-side validation
-    if (!email.trim() || !password.trim()) {
+    const trimmedEmail = email.trim();
+    const trimmedPassword = password.trim();
+
+    // Client-side validations
+    if (!trimmedEmail || !trimmedPassword) {
       setError('Please fill in all fields.');
+      return;
+    }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(trimmedEmail)) {
+      setError('Please enter a valid email address.');
       return;
     }
 
@@ -89,19 +87,10 @@ export default function Login() {
     setIsSubmitting(true);
 
     try {
-      // Call POST /api/auth/login
-      const response = await apiLogin(email, password);
-
-      // On success, store the token and user in AuthContext
-      // This triggers a re-render across the app — the Navbar will update,
-      // protected routes will become accessible, etc.
+      const response = await apiLogin(trimmedEmail, trimmedPassword);
       login(response.access_token, response.user);
-
-      // Navigate to the dashboard
-      // 'replace: true' means pressing Back won't return to the login page
       navigate('/dashboard', { replace: true });
     } catch (err) {
-      // Display the error message from the API (or a generic one)
       setError(
         err instanceof Error
           ? err.message
@@ -125,24 +114,39 @@ export default function Login() {
           </div>
           <h1 className="text-2xl font-bold text-white mb-1">Welcome back</h1>
           <p className="text-slate-400">
-            Sign in to access your TideSense account
+            Sign in to access your Kinaara account
           </p>
         </div>
 
         {/* ---- Login Form Card ---- */}
-        {/*
-          TAILWIND BREAKDOWN:
-          'bg-[#0D1B2A]'      → background color from our design system (surface)
-          'border border-[#20364A]' → thin border in our border color
-          'rounded-2xl'       → border-radius: 1rem (16px) — our locked radius
-          'p-8'               → padding: 2rem on all sides
-          'shadow-xl shadow-black/20' → subtle shadow for depth
-        */}
         <div className="bg-[#0D1B2A] border border-[#20364A] rounded-2xl p-8 shadow-xl shadow-black/20">
+          {/* ---- Quick Demo Credentials ---- */}
+          <div className="mb-6 p-3 bg-[#13263A]/80 border border-[#20364A] rounded-xl">
+            <div className="flex items-center gap-2 mb-2 text-xs font-semibold text-cyan-400">
+              <KeyRound className="w-3.5 h-3.5" />
+              <span>Quick Demo Credentials</span>
+            </div>
+            <div className="grid grid-cols-2 gap-2 text-xs">
+              <button
+                type="button"
+                onClick={() => handleQuickFill('test@example.com', 'password123')}
+                className="px-2.5 py-1.5 bg-[#0D1B2A] hover:bg-cyan-500/10 border border-[#20364A] hover:border-cyan-500/30 rounded-lg text-slate-300 hover:text-cyan-400 text-left transition-colors truncate"
+              >
+                <div className="font-medium text-white truncate">Tourist User</div>
+                <div className="text-[10px] text-slate-400 truncate">test@example.com</div>
+              </button>
+              <button
+                type="button"
+                onClick={() => handleQuickFill('authority@kinaara.in', 'authority123')}
+                className="px-2.5 py-1.5 bg-[#0D1B2A] hover:bg-cyan-500/10 border border-[#20364A] hover:border-cyan-500/30 rounded-lg text-slate-300 hover:text-cyan-400 text-left transition-colors truncate"
+              >
+                <div className="font-medium text-white truncate">Authority</div>
+                <div className="text-[10px] text-slate-400 truncate">authority@kinaara.in</div>
+              </button>
+            </div>
+          </div>
 
           {/* ---- Error Message ---- */}
-          {/* Conditional rendering: this only appears when 'error' is non-empty */}
-          {/* The && operator in JSX means: "if left side is truthy, render right side" */}
           {error && (
             <div className="mb-6 p-3.5 bg-red-500/10 border border-red-500/25 rounded-xl text-red-400 text-sm">
               {error}
@@ -150,35 +154,29 @@ export default function Login() {
           )}
 
           {/* ---- The Form ---- */}
-          {/*
-            onSubmit={handleSubmit} → runs our handler when form is submitted
-            This replaces the traditional 'action="/login" method="POST"'
-            because we handle the API call in JavaScript.
-          */}
-          <form onSubmit={handleSubmit} className="space-y-5">
+          <form onSubmit={handleSubmit} className="space-y-6">
 
             {/* ---- Email Field ---- */}
             <div>
               <label
                 htmlFor="login-email"
-                className="block text-sm font-medium text-slate-300 mb-2"
+                className="block text-sm font-semibold text-slate-200 mb-2.5"
               >
                 Email Address
               </label>
               <div className="relative">
-                {/* Icon positioned inside the input using absolute positioning */}
                 <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
                 <input
                   id="login-email"
                   type="email"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
+                  onChange={(e) => handleEmailChange(e.target.value)}
                   placeholder="you@example.com"
                   required
                   autoComplete="email"
-                  className="w-full pl-12 pr-4 py-3 bg-[#13263A] border border-[#20364A] rounded-xl text-white placeholder-slate-500 
-                    focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/25
-                    transition-colors text-sm"
+                  className="w-full pl-12 pr-4 py-3.5 bg-[#13263A] border border-[#20364A] rounded-xl text-white placeholder-slate-500/70
+                    focus:outline-none focus:border-cyan-500/60 focus:ring-2 focus:ring-cyan-500/20
+                    transition-all duration-200 text-sm"
                 />
               </div>
             </div>
@@ -187,7 +185,7 @@ export default function Login() {
             <div>
               <label
                 htmlFor="login-password"
-                className="block text-sm font-medium text-slate-300 mb-2"
+                className="block text-sm font-semibold text-slate-200 mb-2.5"
               >
                 Password
               </label>
@@ -197,18 +195,18 @@ export default function Login() {
                   id="login-password"
                   type={showPassword ? 'text' : 'password'}
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => handlePasswordChange(e.target.value)}
                   placeholder="Enter your password"
                   required
                   autoComplete="current-password"
-                  className="w-full pl-12 pr-12 py-3 bg-[#13263A] border border-[#20364A] rounded-xl text-white placeholder-slate-500 
-                    focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/25
-                    transition-colors text-sm"
+                  className="w-full pl-12 pr-12 py-3.5 bg-[#13263A] border border-[#20364A] rounded-xl text-white placeholder-slate-500/70
+                    focus:outline-none focus:border-cyan-500/60 focus:ring-2 focus:ring-cyan-500/20
+                    transition-all duration-200 text-sm"
                 />
-                {/* Toggle password visibility button */}
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
+                  aria-label={showPassword ? 'Hide password' : 'Show password'}
                   className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300 transition-colors"
                   tabIndex={-1}
                 >
@@ -222,34 +220,33 @@ export default function Login() {
             </div>
 
             {/* ---- Submit Button ---- */}
-            {/*
-              disabled={isSubmitting} → prevents double-submission during API call
-              The button shows a spinner while the request is in flight.
-            */}
-            <button
-              type="submit"
-              disabled={isSubmitting}
-              className="w-full py-3 bg-cyan-500 hover:bg-cyan-400 disabled:bg-cyan-500/50 
-                text-[#07111F] font-semibold rounded-xl transition-all duration-200
-                disabled:cursor-not-allowed text-sm"
-            >
-              {isSubmitting ? (
-                <span className="inline-flex items-center gap-2">
-                  <Loader2 className="w-4 h-4 animate-spin" />
-                  Signing in...
-                </span>
-              ) : (
-                'Sign In'
-              )}
-            </button>
+            <div className="pt-2">
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full py-3.5 bg-cyan-500 hover:bg-cyan-400 active:bg-cyan-600 disabled:bg-cyan-500/40
+                  text-[#07111F] font-bold rounded-xl transition-all duration-200
+                  disabled:cursor-not-allowed text-sm tracking-wide shadow-lg shadow-cyan-500/20
+                  hover:shadow-cyan-500/30 hover:-translate-y-0.5"
+              >
+                {isSubmitting ? (
+                  <span className="inline-flex items-center gap-2">
+                    <Loader2 className="w-4 h-4 animate-spin" />
+                    Signing in...
+                  </span>
+                ) : (
+                  'Sign In'
+                )}
+              </button>
+            </div>
           </form>
 
           {/* ---- Register Link ---- */}
-          <p className="mt-6 text-center text-sm text-slate-400">
+          <p className="mt-7 text-center text-sm text-slate-500">
             Don't have an account?{' '}
             <Link
               to="/register"
-              className="text-cyan-400 hover:text-cyan-300 font-medium transition-colors"
+              className="text-cyan-400 hover:text-cyan-300 font-semibold transition-colors"
             >
               Create one
             </Link>

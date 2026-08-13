@@ -98,7 +98,7 @@ export default function Register() {
           </div>
           <h1 className="text-2xl font-bold text-white mb-1">Create Account</h1>
           <p className="text-slate-400">
-            Join TideSense to report issues and save preferences
+            Join Kinaara to report issues and save preferences
           </p>
         </div>
 

@@ -1,5 +1,5 @@
 // =============================================================================
-// TideSense Navigation Bar Component
+// Kinaara Navigation Bar Component
 // =============================================================================
 // This is the top navigation bar that appears on every page of the app.
 //
@@ -119,7 +119,7 @@ export default function Navbar({ isAuthenticated, userRole, userName, onLogout }
             <div className="p-1.5 bg-cyan-500/20 rounded-lg">
               <Waves className="w-5 h-5 text-cyan-400" />
             </div>
-            <span className="tracking-tight">TideSense</span>
+            <span className="tracking-tight">Kinaara</span>
           </Link>
 
           {/* ---- DESKTOP NAVIGATION LINKS ---- */}
