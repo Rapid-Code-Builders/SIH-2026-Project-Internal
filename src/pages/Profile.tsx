@@ -1,81 +1,62 @@
-// =============================================================================
-// TideSense — User Profile Page (Profile.tsx)
-// =============================================================================
-//
-// WHAT THIS PAGE DOES:
-// 1. Fetches the current user's profile (GET /api/users/me).
-// 2. Displays an editable form with name, email, location, preferred activity,
-//    and emergency contact.
-// 3. On save, calls PUT /api/users/me with the updated fields.
-//
-// ROUTE: /profile (Protected — requires login)
-// API: GET /api/users/me → Profile, PUT /api/users/me → Profile
-// =============================================================================
-
 import { useState, useEffect, type FormEvent } from 'react';
+import { Link } from 'react-router-dom';
 import {
-  User,
-  Mail,
-  MapPin,
-  Activity,
-  Phone,
-  Save,
-  Loader2,
-  CheckCircle,
-  LogOut,
+  User, Mail, MapPin, Activity, Phone, Save, Loader2, CheckCircle, LogOut,
+  FileText, Clock
 } from 'lucide-react';
-
 import { useAuth } from '../context/AuthContext';
-import { getProfile, updateProfile } from '../services/api';
-
+import { getProfile, updateProfile, getReports } from '../services/api';
+import type { Report } from '../types';
+import { timeAgo } from '../utils/helpers';
 
 export default function Profile() {
-  // Auth context for display and logout
   const { user, logout } = useAuth();
 
-  // Profile form state
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [location, setLocation] = useState('');
   const [preferredActivity, setPreferredActivity] = useState('');
   const [emergencyContact, setEmergencyContact] = useState('');
+  
+  const [reports, setReports] = useState<Report[]>([]);
+  const [isLoadingReports, setIsLoadingReports] = useState(true);
 
-  // UI state
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState('');
   const [saved, setSaved] = useState(false);
 
-  // ---------------------------------------------------------------------------
-  // LOAD PROFILE ON MOUNT
-  // ---------------------------------------------------------------------------
   useEffect(() => {
-    async function loadProfile() {
+    async function loadData() {
       try {
-        const data = await getProfile();
-        setName(data.name || '');
-        setEmail(data.email || '');
-        setLocation(data.location || '');
-        setPreferredActivity(data.preferred_activity || '');
-        setEmergencyContact(data.emergency_contact || '');
+        const [profileData, reportsData] = await Promise.all([
+          getProfile(),
+          getReports()
+        ]);
+        setName(profileData.name || '');
+        setEmail(profileData.email || '');
+        setLocation(profileData.location || '');
+        setPreferredActivity(profileData.preferred_activity || '');
+        setEmergencyContact(profileData.emergency_contact || '');
+        
+        // Filter reports to only show the user's reports if the backend returns all of them,
+        // Assuming backend handles it, but just in case, we display what is returned.
+        setReports(reportsData);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'Failed to load profile');
+        setError(err instanceof Error ? err.message : 'Failed to load profile data');
       } finally {
         setIsLoading(false);
+        setIsLoadingReports(false);
       }
     }
-    loadProfile();
+    loadData();
   }, []);
 
-  // ---------------------------------------------------------------------------
-  // SAVE PROFILE
-  // ---------------------------------------------------------------------------
   const handleSave = async (e: FormEvent) => {
     e.preventDefault();
     setError('');
     setSaved(false);
     setIsSaving(true);
-
     try {
       await updateProfile({
         name,
@@ -84,7 +65,6 @@ export default function Profile() {
         emergency_contact: emergencyContact || undefined,
       });
       setSaved(true);
-      // Auto-dismiss success message after 3 seconds
       setTimeout(() => setSaved(false), 3000);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to save profile');
@@ -93,9 +73,6 @@ export default function Profile() {
     }
   };
 
-  // ---------------------------------------------------------------------------
-  // RENDER
-  // ---------------------------------------------------------------------------
   if (isLoading) {
     return (
       <div className="max-w-2xl mx-auto space-y-6 animate-pulse pb-12">
@@ -106,9 +83,8 @@ export default function Profile() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto animate-fade-in pb-12">
-      {/* Header */}
-      <div className="mb-8">
+    <div className="max-w-2xl mx-auto animate-fade-in pb-12 space-y-8">
+      <div>
         <h1 className="text-3xl font-bold text-white flex items-center gap-3 mb-2">
           <User className="w-8 h-8 text-cyan-400" />
           My Profile
@@ -118,9 +94,7 @@ export default function Profile() {
         </p>
       </div>
 
-      {/* Profile Card */}
       <div className="bg-[#0D1B2A] border border-[#20364A] rounded-2xl shadow-xl shadow-black/20">
-        {/* Avatar Header */}
         <div className="p-8 border-b border-[#20364A] flex items-center gap-5">
           <div className="w-16 h-16 rounded-full bg-cyan-500/20 flex items-center justify-center text-2xl font-bold text-cyan-400">
             {(user?.name || name || '?')[0].toUpperCase()}
@@ -134,17 +108,13 @@ export default function Profile() {
           </div>
         </div>
 
-        {/* Form */}
         <div className="p-8">
-          {/* Success Message */}
           {saved && (
             <div className="mb-6 p-3.5 bg-emerald-500/10 border border-emerald-500/25 rounded-xl text-emerald-400 text-sm flex items-center gap-2">
               <CheckCircle className="w-4 h-4" />
               Profile updated successfully!
             </div>
           )}
-
-          {/* Error */}
           {error && (
             <div className="mb-6 p-3.5 bg-red-500/10 border border-red-500/25 rounded-xl text-red-400 text-sm">
               {error}
@@ -152,7 +122,6 @@ export default function Profile() {
           )}
 
           <form onSubmit={handleSave} className="space-y-5">
-            {/* Name */}
             <div>
               <label htmlFor="profile-name" className="block text-sm font-medium text-slate-300 mb-2">
                 Full Name
@@ -170,7 +139,6 @@ export default function Profile() {
               </div>
             </div>
 
-            {/* Email (read-only) */}
             <div>
               <label htmlFor="profile-email" className="block text-sm font-medium text-slate-300 mb-2">
                 Email <span className="text-slate-500">(cannot be changed)</span>
@@ -188,7 +156,6 @@ export default function Profile() {
               </div>
             </div>
 
-            {/* Location */}
             <div>
               <label htmlFor="profile-location" className="block text-sm font-medium text-slate-300 mb-2">
                 Preferred Location
@@ -207,7 +174,6 @@ export default function Profile() {
               </div>
             </div>
 
-            {/* Preferred Activity */}
             <div>
               <label htmlFor="profile-activity" className="block text-sm font-medium text-slate-300 mb-2">
                 Preferred Activity
@@ -230,7 +196,6 @@ export default function Profile() {
               </div>
             </div>
 
-            {/* Emergency Contact */}
             <div>
               <label htmlFor="profile-emergency" className="block text-sm font-medium text-slate-300 mb-2">
                 Emergency Contact
@@ -249,7 +214,6 @@ export default function Profile() {
               </div>
             </div>
 
-            {/* Save */}
             <button
               type="submit"
               disabled={isSaving}
@@ -272,7 +236,6 @@ export default function Profile() {
           </form>
         </div>
 
-        {/* Logout Section */}
         <div className="px-8 py-5 border-t border-[#20364A]">
           <button
             onClick={logout}
@@ -284,6 +247,63 @@ export default function Profile() {
           </button>
         </div>
       </div>
+
+      {/* MY REPORTS SECTION */}
+      <div>
+        <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+          <FileText className="w-5 h-5 text-cyan-400" /> My Reports
+        </h2>
+        
+        {isLoadingReports ? (
+           <div className="h-32 bg-[#0D1B2A] rounded-2xl border border-[#20364A] animate-pulse" />
+        ) : reports.length === 0 ? (
+          <div className="bg-[#0D1B2A] border border-[#20364A] rounded-2xl p-8 text-center">
+            <p className="text-slate-400 mb-4">You haven't submitted any reports yet.</p>
+            <Link to="/report" className="inline-flex items-center justify-center px-6 py-2.5 bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 rounded-xl hover:bg-cyan-500/20 transition-colors text-sm font-medium">
+              Report an Issue
+            </Link>
+          </div>
+        ) : (
+          <div className="bg-[#0D1B2A] border border-[#20364A] rounded-2xl overflow-hidden">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-sm whitespace-nowrap">
+                <thead className="bg-[#13263A] text-slate-300">
+                  <tr>
+                    <th className="px-6 py-4 font-medium">ID</th>
+                    <th className="px-6 py-4 font-medium">Type</th>
+                    <th className="px-6 py-4 font-medium">Beach</th>
+                    <th className="px-6 py-4 font-medium">Status</th>
+                    <th className="px-6 py-4 font-medium">Date</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[#20364A]">
+                  {reports.map((report) => (
+                    <tr key={report.id} className="hover:bg-[#13263A]/50 transition-colors">
+                      <td className="px-6 py-4 text-slate-400">#{report.id}</td>
+                      <td className="px-6 py-4 text-white capitalize">{report.issue_type.replace('_', ' ')}</td>
+                      <td className="px-6 py-4 text-slate-300">{report.beach_name || `Beach #${report.beach_id}`}</td>
+                      <td className="px-6 py-4">
+                        <span className={`px-2.5 py-1 rounded text-xs font-bold uppercase ${
+                          report.status === 'PENDING' ? 'bg-amber-500/15 text-amber-400' :
+                          report.status === 'VERIFIED' ? 'bg-emerald-500/15 text-emerald-400' :
+                          'bg-red-500/15 text-red-400'
+                        }`}>
+                          {report.status}
+                        </span>
+                      </td>
+                      <td className="px-6 py-4 text-slate-400 flex items-center gap-1">
+                        <Clock className="w-3.5 h-3.5" />
+                        {timeAgo(report.created_at)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+      </div>
+
     </div>
   );
 }
