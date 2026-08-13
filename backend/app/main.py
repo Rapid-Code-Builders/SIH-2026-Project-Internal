@@ -1,8 +1,16 @@
 from fastapi import FastAPI
 from sqlalchemy import text
 
-from app.database import engine
-
+from app.database import Base, engine
+from app.models import (
+    User,
+    UserProfile,
+    Beach,
+    BeachCondition,
+    SafetyIndex,
+    Report,
+    Alert,
+)
 
 app = FastAPI(
     title="Kinaara API",
@@ -10,6 +18,7 @@ app = FastAPI(
     version="1.0.0",
 )
 
+Base.metadata.create_all(bind=engine)
 
 @app.get("/")
 def root():
