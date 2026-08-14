@@ -12,6 +12,15 @@ export const mockBeaches: Beach[] = [
     wave_height: 1.5,
     water_quality: 'Moderate',
     crowd_level: 'High',
+    activities: ['swimming', 'surfing', 'fishing'],
+    heroImage: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=1400&q=80',
+    gallery: [
+      'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=900&q=80',
+      'https://images.unsplash.com/photo-1519046904884-53103b34b206?w=900&q=80',
+      'https://images.unsplash.com/photo-1530053969600-caed2596d242?w=900&q=80',
+      'https://images.unsplash.com/photo-1437719417032-8595fd9e9dc6?w=900&q=80',
+      'https://images.unsplash.com/photo-1455729552865-3658a5d39692?w=900&q=80',
+    ],
   },
   {
     id: 2,
@@ -24,6 +33,14 @@ export const mockBeaches: Beach[] = [
     wave_height: 2.5,
     water_quality: 'Poor',
     crowd_level: 'High',
+    activities: ['fishing'],
+    heroImage: 'https://images.unsplash.com/photo-1519451241324-20b4ea2c4220?w=1400&q=80',
+    gallery: [
+      'https://images.unsplash.com/photo-1519451241324-20b4ea2c4220?w=900&q=80',
+      'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=900&q=80',
+      'https://images.unsplash.com/photo-1484821582734-6c6c9f99a672?w=900&q=80',
+      'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=900&q=80',
+    ],
   },
   {
     id: 3,
@@ -36,6 +53,16 @@ export const mockBeaches: Beach[] = [
     wave_height: 0.5,
     water_quality: 'Excellent',
     crowd_level: 'Low',
+    activities: ['swimming', 'diving', 'snorkeling'],
+    heroImage: 'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=1400&q=80',
+    gallery: [
+      'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=900&q=80',
+      'https://images.unsplash.com/photo-1506929562872-bb421503ef21?w=900&q=80',
+      'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=900&q=80',
+      'https://images.unsplash.com/photo-1519046904884-53103b34b206?w=900&q=80',
+      'https://images.unsplash.com/photo-1455729552865-3658a5d39692?w=900&q=80',
+      'https://images.unsplash.com/photo-1437719417032-8595fd9e9dc6?w=900&q=80',
+    ],
   },
   {
     id: 4,
@@ -48,6 +75,14 @@ export const mockBeaches: Beach[] = [
     wave_height: 0.8,
     water_quality: 'Good',
     crowd_level: 'Moderate',
+    activities: ['swimming', 'surfing', 'fishing', 'yoga'],
+    heroImage: 'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=1400&q=80',
+    gallery: [
+      'https://images.unsplash.com/photo-1559827260-dc66d52bef19?w=900&q=80',
+      'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=900&q=80',
+      'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=900&q=80',
+      'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=900&q=80',
+    ],
   },
   {
     id: 5,
@@ -60,6 +95,15 @@ export const mockBeaches: Beach[] = [
     wave_height: 0.6,
     water_quality: 'Good',
     crowd_level: 'Moderate',
+    activities: ['swimming', 'kayaking', 'fishing'],
+    heroImage: 'https://images.unsplash.com/photo-1506929562872-bb421503ef21?w=1400&q=80',
+    gallery: [
+      'https://images.unsplash.com/photo-1506929562872-bb421503ef21?w=900&q=80',
+      'https://images.unsplash.com/photo-1544551763-46a013bb70d5?w=900&q=80',
+      'https://images.unsplash.com/photo-1530053969600-caed2596d242?w=900&q=80',
+      'https://images.unsplash.com/photo-1455729552865-3658a5d39692?w=900&q=80',
+      'https://images.unsplash.com/photo-1519046904884-53103b34b206?w=900&q=80',
+    ],
   },
   {
     id: 6,
@@ -72,6 +116,14 @@ export const mockBeaches: Beach[] = [
     wave_height: 1.8,
     water_quality: 'Moderate',
     crowd_level: 'High',
+    activities: ['fishing', 'walking'],
+    heroImage: 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=1400&q=80',
+    gallery: [
+      'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=900&q=80',
+      'https://images.unsplash.com/photo-1484821582734-6c6c9f99a672?w=900&q=80',
+      'https://images.unsplash.com/photo-1519451241324-20b4ea2c4220?w=900&q=80',
+      'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=900&q=80',
+    ],
   },
 ];
 

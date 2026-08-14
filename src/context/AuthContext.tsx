@@ -161,6 +161,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // ---------------------------------------------------------------------------
   const login = useCallback((newToken: string, newUser: User) => {
     localStorage.setItem('token', newToken);
+    localStorage.setItem('mock_user', JSON.stringify(newUser));
     setToken(newToken);
     setUser(newUser);
   }, []);
@@ -170,6 +171,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // ---------------------------------------------------------------------------
   const logout = useCallback(() => {
     localStorage.removeItem('token');
+    localStorage.removeItem('mock_user');
     setToken(null);
     setUser(null);
   }, []);

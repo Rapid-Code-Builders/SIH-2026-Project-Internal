@@ -46,6 +46,10 @@ export interface Beach {
   wave_height?: number;
   water_quality?: string;
   crowd_level?: string;
+  /** Hero photo URL shown in BeachDetail header. Supply actual beach photo URL here. */
+  heroImage?: string;
+  /** Array of photo URLs for the Pinterest bento gallery on the detail page. */
+  gallery?: string[];
 }
 
 /**

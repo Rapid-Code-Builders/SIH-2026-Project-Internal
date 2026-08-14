@@ -1,76 +1,104 @@
 // =============================================================================
-// TideSense Utility / Helper Functions
-// =============================================================================
-// Shared utility functions used across multiple components.
-// Think of this like a 'utils.py' in your backend — small, reusable functions
-// that don't belong to any specific component.
+// Kinaara Utility / Helper Functions
+// Status color functions return inline-style-compatible values using CSS vars
+// so they cascade from the single source of truth in index.css
 // =============================================================================
 
 /**
- * Returns the appropriate CSS color class based on a beach safety status.
- * This maps the backend's status enum to Tailwind CSS color classes.
- *
- * Similar to how you might have a status-to-color mapping in a Jinja template
- * or a serializer in Django/FastAPI.
+ * Returns a text color for status — used in SVG stroke (must be a hex/rgb,
+ * not a CSS class, because SVG stroke="currentColor" needs to inherit).
+ * Colors match --color-safe / --color-caution / --color-unsafe tokens.
  */
 export function getStatusColor(status: string): string {
   switch (status?.toUpperCase()) {
     case 'SAFE':
     case 'GOOD':
-      return 'text-emerald-400';
+      return 'text-[#4C8B6F]';    // var(--color-safe)
     case 'CAUTION':
     case 'MODERATE':
-      return 'text-amber-400';
+      return 'text-[#D69A3C]';    // var(--color-caution)
     case 'UNSAFE':
     case 'POOR':
     case 'DANGEROUS':
-      return 'text-red-400';
+      return 'text-[#C74B3F]';    // var(--color-unsafe)
     default:
-      return 'text-slate-400';
+      return 'text-[#9C8775]';    // var(--color-text-muted)
   }
 }
 
 /**
- * Returns a background color class for status badges.
+ * Returns CSS hex color for status — used directly in style={{color:}} for
+ * SVG/icon contexts where class-based color inheritance is unreliable.
+ */
+export function getStatusHex(status: string): string {
+  switch (status?.toUpperCase()) {
+    case 'SAFE':
+    case 'GOOD':
+      return '#4C8B6F';
+    case 'CAUTION':
+    case 'MODERATE':
+      return '#D69A3C';
+    case 'UNSAFE':
+    case 'POOR':
+    case 'DANGEROUS':
+      return '#C74B3F';
+    default:
+      return '#9C8775';
+  }
+}
+
+/**
+ * Returns badge className for solid-fill status badges.
+ * Replaces the old tinted/pastel approach with solid fills + white text.
  */
 export function getStatusBgColor(status: string): string {
   switch (status?.toUpperCase()) {
     case 'SAFE':
     case 'GOOD':
-      return 'bg-emerald-400/15 text-emerald-400 border-emerald-400/30';
+      return 'badge badge-safe';
     case 'CAUTION':
     case 'MODERATE':
-      return 'bg-amber-400/15 text-amber-400 border-amber-400/30';
+      return 'badge badge-caution';
     case 'UNSAFE':
     case 'POOR':
     case 'DANGEROUS':
-      return 'bg-red-400/15 text-red-400 border-red-400/30';
+      return 'badge badge-unsafe';
     default:
-      return 'bg-slate-400/15 text-slate-400 border-slate-400/30';
+      return 'badge badge-info';
   }
 }
 
 /**
- * Returns a color class for alert severity.
+ * Returns severity color className for alert banners.
+ * Critical = unsafe red, Warning = caution amber, Info = ocean blue.
  */
 export function getSeverityColor(severity: string): string {
   switch (severity?.toUpperCase()) {
     case 'CRITICAL':
-      return 'bg-red-500/15 text-red-400 border-red-500/30';
+      return 'bg-[#FDECEA] text-[#C74B3F] border border-[#C74B3F]/30';
     case 'WARNING':
-      return 'bg-amber-500/15 text-amber-400 border-amber-500/30';
+      return 'bg-[#FDF3E0] text-[#A67020] border border-[#D69A3C]/40';
     case 'INFO':
-      return 'bg-blue-500/15 text-blue-400 border-blue-500/30';
+      return 'bg-[#E8F2F8] text-[#2E5A72] border border-[#3E6E8E]/30';
     default:
-      return 'bg-slate-500/15 text-slate-400 border-slate-500/30';
+      return 'bg-[#F6EEE1] text-[#6B5A47] border border-[rgba(34,25,15,0.10)]';
+  }
+}
+
+/**
+ * Returns a severity hex color (for icon tinting in SVG contexts).
+ */
+export function getSeverityHex(severity: string): string {
+  switch (severity?.toUpperCase()) {
+    case 'CRITICAL': return '#C74B3F';
+    case 'WARNING':  return '#D69A3C';
+    case 'INFO':     return '#3E6E8E';
+    default:         return '#6B5A47';
   }
 }
 
 /**
  * Formats a timestamp into a human-readable "time ago" string.
- * e.g., "Updated 4 min ago", "Updated 2 hrs ago"
- *
- * This is purely a display helper — like a template filter in Django.
  */
 export function timeAgo(dateString: string): string {
   const now = new Date();
@@ -90,11 +118,12 @@ export function timeAgo(dateString: string): string {
 
 /**
  * Returns a greeting based on the current time of day.
- * Used on the dashboard home page.
  */
 export function getGreeting(): string {
   const hour = new Date().getHours();
-  if (hour < 12) return 'Good morning';
-  if (hour < 17) return 'Good afternoon';
-  return 'Good evening';
+  if (hour >= 5 && hour < 12)  return 'The tides are calm — good morning';
+  if (hour >= 12 && hour < 15) return 'High tide energy — good afternoon';
+  if (hour >= 15 && hour < 18) return 'The sun meets the sea — good afternoon';
+  if (hour >= 18 && hour < 21) return 'Golden hour on the shore — good evening';
+  return 'The coast never sleeps — good evening';
 }

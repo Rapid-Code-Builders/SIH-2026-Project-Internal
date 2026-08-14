@@ -32,8 +32,8 @@ export const ActivitySelector: React.FC<ActivitySelectorProps> = ({
             className={`
               flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-200
               ${isSelected 
-                ? 'bg-cyan-500 text-white shadow-md shadow-cyan-500/20' 
-                : 'bg-transparent border border-[#20364A] text-slate-300 hover:border-cyan-500/50 hover:text-cyan-400'
+                ? 'bg-[#A67C5A] text-white shadow-md shadow-[rgba(166,124,90,0.25)]' 
+                : 'bg-transparent border border-[#DCC9B2] text-[#6B4F3E] hover:border-[#A67C5A] hover:text-[#3A2A20]'
               }
             `}
           >

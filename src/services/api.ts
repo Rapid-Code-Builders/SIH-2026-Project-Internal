@@ -64,7 +64,12 @@ async function handleResponse<T>(response: Response): Promise<T> {
 export async function login(email: string, password: string): Promise<AuthResponse> {
   if (USE_MOCK) {
     await delay(800);
-    return { access_token: 'mock-jwt-token-123', token_type: 'bearer', user: { ...mockUser, email } };
+    // Return AUTHORITY role for authority demo account
+    const isAuthority = email.toLowerCase().includes('authority');
+    const user = isAuthority
+      ? { ...mockUser, email, role: 'AUTHORITY' as const, name: 'Authority Officer' }
+      : { ...mockUser, email };
+    return { access_token: 'mock-jwt-token-123', token_type: 'bearer', user };
   }
   
   const response = await fetch(`${API_URL}/api/auth/login`, {
@@ -94,6 +99,9 @@ export async function getCurrentUser(): Promise<{ user: { id: number; name: stri
     await delay(300);
     const token = localStorage.getItem('token');
     if (!token) throw new Error('No token');
+    // Restore stored user data (role included) if available
+    const storedUser = localStorage.getItem('mock_user');
+    if (storedUser) return { user: JSON.parse(storedUser) };
     return { user: mockUser as any };
   }
 

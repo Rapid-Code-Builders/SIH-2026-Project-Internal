@@ -1,290 +1,496 @@
 /* =============================================================================
- * TideSense Global Styles
- * =============================================================================
- * This is the main CSS entry point for the application.
- *
- * TAILWIND CSS EXPLAINED FOR BACKEND DEVS:
- * Tailwind is a "utility-first" CSS framework. Instead of writing custom CSS
- * classes like '.my-button { background: blue; padding: 10px; }', you apply
- * small utility classes directly in your HTML/JSX:
- *   <button className="bg-blue-500 p-2.5">Click me</button>
- *
- * The '@import "tailwindcss"' directive below loads Tailwind's entire
- * utility system. Tailwind then scans your source files and generates
- * only the CSS classes you actually use — keeping the bundle small.
- *
- * WHY NOT REGULAR CSS?
- * For a one-day hackathon, Tailwind is dramatically faster than writing
- * custom CSS. You style directly where the HTML lives, reducing the
- * context-switching between files.
- * ========================================================================== */
+ * Kinaara — Global Styles
+ * Bold, premium, high-trust design system — coastal palette with real depth.
+ * All hex values live here. Components reference CSS custom properties only.
+ * =============================================================================*/
 
-/* Import Tailwind CSS v4 — this single import gives us all utilities */
 @import "tailwindcss";
 
 /* =============================================================================
- * Custom Theme Variables
- * =============================================================================
- * These CSS custom properties (variables) define TideSense's design tokens.
- * They're referenced throughout the app for consistency.
- * Think of them like constants in your Python config file.
- * ========================================================================== */
-
+ * DESIGN TOKENS — Single Source of Truth
+ * =============================================================================*/
 :root {
-  /* === Color Palette: Dark Navy Coastal Theme === */
-  --color-ts-bg: #07111F;
-  --color-ts-surface: #0D1B2A;
-  --color-ts-elevated: #13263A;
-  --color-ts-border: #20364A;
+  /* ── Backgrounds ── */
+  --color-bg:              #F6EEE1;
+  --color-surface:         #FFFFFF;
+  --color-surface-sunken:  #EDE0CC;
+  --color-surface-alt:     #F6EEE1;
 
-  /* === Accent Colors === */
-  --color-ts-cyan: #22D3EE;
-  --color-ts-teal: #2DD4BF;
-  --color-ts-blue: #3B82F6;
+  /* ── Borders ── */
+  --color-border:          rgba(34, 25, 15, 0.10);
+  --color-border-strong:   rgba(34, 25, 15, 0.18);
 
-  /* === Status Colors === */
-  --color-ts-safe: #34D399;
-  --color-ts-caution: #FBBF24;
-  --color-ts-unsafe: #F87171;
+  /* ── Text ── */
+  --color-ink:             #22190F;
+  --color-text-primary:    #22190F;
+  --color-text-secondary:  #6B5A47;
+  --color-text-muted:      #9C8775;
+
+  /* ── Primary Accent — hero color, primary actions ONLY ── */
+  --color-accent:          #C2703D;
+  --color-accent-hover:    #A85A2C;
+  --color-accent-active:   #8F4A1F;
+  --color-accent-ink:      #FFFFFF;
+  --color-accent-glow:     rgba(194, 112, 61, 0.18);
+
+  /* ── Deep Anchor ── */
+  --color-deep:            #1E3A42;
+  --color-deep-alt:        #2C4F58;
+  --color-deep-ink:        #FFFFFF;
+
+  /* ── Status — fully saturated ── */
+  --color-safe:            #4C8B6F;
+  --color-safe-bg:         #EBF5F0;
+  --color-safe-ink:        #FFFFFF;
+
+  --color-caution:         #D69A3C;
+  --color-caution-bg:      #FDF3E0;
+  --color-caution-ink:     #FFFFFF;
+
+  --color-unsafe:          #C74B3F;
+  --color-unsafe-bg:       #FDECEA;
+  --color-unsafe-ink:      #FFFFFF;
+
+  --color-info:            #3E6E8E;
+  --color-info-bg:         #E8F2F8;
+  --color-info-ink:        #FFFFFF;
+
+  /* ── Elevation ── */
+  --shadow-sm: 0 1px 2px rgba(34,25,15,0.06), 0 1px 1px rgba(34,25,15,0.04);
+  --shadow-md: 0 4px 12px rgba(34,25,15,0.08), 0 2px 4px rgba(34,25,15,0.04);
+  --shadow-lg: 0 12px 32px rgba(34,25,15,0.12), 0 4px 8px rgba(34,25,15,0.06);
+  --shadow-accent:       0 4px 14px rgba(194,112,61,0.35);
+  --shadow-accent-hover: 0 6px 20px rgba(194,112,61,0.45);
+
+  /* ── Primary Button Gradient ── */
+  --gradient-primary:       linear-gradient(135deg, #D17E4C 0%, #C2703D 100%);
+  --gradient-primary-hover: linear-gradient(135deg, #B86838 0%, #A85A2C 100%);
+
+  /* ── Legacy aliases — backward compat ── */
+  --color-deep-tide:       var(--color-bg);
+  --color-dark-sand:       var(--color-surface);
+  --color-driftwood:       var(--color-surface-sunken);
+  --color-tidal-brown:     #DCC9B2;
+  --color-faint-bronze:    #DCC9B2;
+  --color-warm-white:      var(--color-ink);
+  --color-sand-mist:       var(--color-text-secondary);
+  --color-weathered-beige: var(--color-text-muted);
+  --color-golden-sun:      var(--color-accent);
+  --color-warm-amber:      var(--color-accent);
+  --color-sunset-coral:    var(--color-caution);
+  --color-deep-coral:      var(--color-unsafe);
+  --color-ts-bg:           var(--color-bg);
+  --color-ts-surface:      var(--color-surface);
+  --color-ts-elevated:     var(--color-surface-sunken);
+  --color-ts-border:       #DCC9B2;
+  --color-ts-cyan:         var(--color-info);
+  --color-ts-safe:         var(--color-safe);
+  --color-ts-caution:      var(--color-caution);
+  --color-ts-unsafe:       var(--color-unsafe);
+
+  /* ── Ocean Accent Palette (new) ── */
+  /* Complementary to the warm beach palette — use for water/ocean UI elements */
+  --color-seafoam:         #5B9E8A;   /* muted teal-green, calm shallow water */
+  --color-seafoam-bg:      #EBF5F2;
+  --color-seafoam-ink:     #FFFFFF;
+
+  --color-tide-blue:       #4A7FA5;   /* mid-depth ocean blue */
+  --color-tide-blue-bg:    #E6F0F8;
+  --color-tide-blue-ink:   #FFFFFF;
+
+  --color-deep-teal:       #2D6E7E;   /* deep water, used for hero ocean data */
+  --color-deep-teal-bg:    #E0EFF3;
+  --color-deep-teal-ink:   #FFFFFF;
+
+  --color-sea-glass:       #7BB3A0;   /* frosted sea-glass, tertiary accents */
+  --color-sea-glass-bg:    #EEF6F4;
+
+  --color-ocean-mist:      #A8C5C0;   /* very subtle, backgrounds/dividers */
+  --color-deep-ocean:      #1A4A5C;   /* darkest ocean, high-emphasis labels */
+  --color-tide-froth:      #D6EDE8;   /* near-white foam, chip backgrounds */
 }
 
 /* =============================================================================
- * Base Styles
- * =============================================================================
- * These apply globally to the entire document.
- * 'antialiased' makes text rendering smoother on modern displays.
- * ========================================================================== */
-
-* {
+ * Base
+ * =============================================================================*/
+*, *::before, *::after {
   margin: 0;
   box-sizing: border-box;
 }
-
+html { 
+  scroll-behavior: smooth; 
+  zoom: 1.1;
+}
 body {
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background-color: #07111F;
-  color: #E2E8F0;              /* slate-200 — default text color for readability */
+  font-family: 'DM Sans', 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: var(--color-bg);
+  color: var(--color-ink);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   min-height: 100vh;
+  line-height: 1.5;
 }
 
 /* =============================================================================
- * Scrollbar Styling
- * =============================================================================
- * Custom scrollbar to match the dark theme. Without this, you get the default
- * white/gray scrollbar which looks jarring on a dark background.
- * ========================================================================== */
-
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
+ * Primary Button
+ * =============================================================================*/
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--gradient-primary);
+  color: var(--color-accent-ink);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  border-radius: 10px;
+  border: none;
+  box-shadow: var(--shadow-accent);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  cursor: pointer;
+  text-decoration: none;
+}
+.btn-primary:hover:not(:disabled) {
+  background: var(--gradient-primary-hover);
+  box-shadow: var(--shadow-accent-hover);
+  transform: translateY(-1px);
+}
+.btn-primary:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: var(--shadow-accent);
+}
+.btn-primary:disabled {
+  opacity: 0.5;
+  box-shadow: none;
+  cursor: not-allowed;
+  transform: none;
 }
 
-::-webkit-scrollbar-track {
-  background: #07111F;
+/* Secondary Button */
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: transparent;
+  color: var(--color-text-secondary);
+  font-weight: 500;
+  border-radius: 10px;
+  border: 1.5px solid var(--color-border);
+  transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+  cursor: pointer;
+  text-decoration: none;
+}
+.btn-secondary:hover:not(:disabled) {
+  border-color: rgba(194,112,61,0.40);
+  background: rgba(194,112,61,0.04);
+  color: var(--color-accent);
 }
 
-::-webkit-scrollbar-thumb {
-  background: #20364A;
-  border-radius: 4px;
+/* Destructive button */
+.btn-destructive {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: transparent;
+  color: var(--color-unsafe);
+  border: none;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: background 0.15s ease;
+  cursor: pointer;
 }
-
-::-webkit-scrollbar-thumb:hover {
-  background: #2d4a66;
-}
-
-/* =============================================================================
- * Leaflet Map Overrides
- * =============================================================================
- * The Leaflet map library has its own default styles. We override some of them
- * here to match our dark theme. Without these, the map popups and controls
- * would appear in Leaflet's default white theme.
- * ========================================================================== */
-
-.leaflet-popup-content-wrapper {
-  background: #0D1B2A !important;
-  color: #E2E8F0 !important;
-  border: 1px solid #20364A !important;
-  border-radius: 12px !important;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4) !important;
-}
-
-.leaflet-popup-tip {
-  background: #0D1B2A !important;
-  border: 1px solid #20364A !important;
-}
-
-.leaflet-popup-close-button {
-  color: #94A3B8 !important;
-}
-
-/* =============================================================================
- * Utility Animations
- * ========================================================================== */
-
-@keyframes fade-in {
-  from {
-    opacity: 0;
-    transform: translateY(8px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.animate-fade-in {
-  animation: fade-in 0.3s ease-out;
-}
-
-/* Slide up animation — used on cards */
-@keyframes slide-up {
-  from {
-    opacity: 0;
-    transform: translateY(16px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.animate-slide-up {
-  animation: slide-up 0.4s ease-out;
-}
-
-/* Subtle pulse glow — used on live status indicators */
-@keyframes pulse-glow {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.6; }
-}
-
-.animate-pulse-glow {
-  animation: pulse-glow 2s ease-in-out infinite;
+.btn-destructive:hover {
+  background: rgba(199,75,63,0.08);
 }
 
 /* =============================================================================
- * Custom Leaflet Marker Styles
- * ========================================================================== */
-.custom-leaflet-marker {
-  background: none !important;
-  border: none !important;
+ * Cards
+ * =============================================================================*/
+.card {
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 14px;
+  box-shadow: var(--shadow-sm);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+.card-interactive {
+  cursor: pointer;
+}
+.card-interactive:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
 }
 
 /* =============================================================================
- * Dark Theme Select Dropdown Fix
- * =============================================================================
- * Native <select> dropdowns don't respect dark themes well.
- * These rules ensure the dropdown options have dark backgrounds.
- * ========================================================================== */
-select option {
-  background-color: #13263A;
-  color: #E2E8F0;
-  padding: 8px;
+ * Status Badges — solid fill, white text
+ * =============================================================================*/
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  padding: 3px 8px;
+  border: none;
+  white-space: nowrap;
+  line-height: 1.4;
+}
+.badge-safe    { background: var(--color-safe);    color: var(--color-safe-ink); }
+.badge-caution { background: var(--color-caution); color: var(--color-caution-ink); }
+.badge-unsafe  { background: var(--color-unsafe);  color: var(--color-unsafe-ink); }
+.badge-info    { background: var(--color-info);    color: var(--color-info-ink); }
+.badge-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.9;
+  flex-shrink: 0;
 }
 
 /* =============================================================================
- * Line Clamp Utility
- * ========================================================================== */
-.line-clamp-2 {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+ * Input Fields
+ * =============================================================================*/
+.field-input {
+  background: var(--color-surface-sunken);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  color: var(--color-ink);
+  width: 100%;
+  font-size: 14px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  outline: none;
 }
+.field-input::placeholder { color: var(--color-text-muted); }
+.field-input:focus {
+  border-color: var(--color-accent);
+  box-shadow: 0 0 0 3px var(--color-accent-glow);
+}
+.field-input:disabled { opacity: 0.6; cursor: not-allowed; }
 
-.line-clamp-1 {
-  display: -webkit-box;
-  -webkit-line-clamp: 1;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
+/* =============================================================================
+ * Deep anchor panel header
+ * =============================================================================*/
+.panel-header-deep {
+  background: var(--color-deep);
+  color: var(--color-deep-ink);
 }
 
 /* =============================================================================
- * Focus Ring Utility (Accessibility)
- * ========================================================================== */
-a:focus-visible,
-button:focus-visible,
-input:focus-visible,
-select:focus-visible,
-textarea:focus-visible {
-  outline: 2px solid #22D3EE;
+ * Scrollbar
+ * =============================================================================*/
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: var(--color-surface-sunken); }
+::-webkit-scrollbar-thumb { background: var(--color-border-strong); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #9C8775; }
+
+/* =============================================================================
+ * Focus Ring
+ * =============================================================================*/
+a:focus-visible, button:focus-visible,
+input:focus-visible, select:focus-visible, textarea:focus-visible {
+  outline: 2px solid var(--color-accent);
   outline-offset: 2px;
   border-radius: 8px;
 }
 
 /* =============================================================================
- * Sidebar Custom Scrollbar
- * ========================================================================== */
-.sidebar-scroll::-webkit-scrollbar {
-  width: 4px;
+ * Leaflet
+ * =============================================================================*/
+.leaflet-popup-content-wrapper {
+  background: var(--color-surface) !important;
+  color: var(--color-ink) !important;
+  border: 1px solid var(--color-border) !important;
+  border-radius: 14px !important;
+  box-shadow: var(--shadow-lg) !important;
+  padding: 0 !important;
 }
-.sidebar-scroll::-webkit-scrollbar-thumb {
-  background: #20364A;
-  border-radius: 4px;
+.leaflet-popup-content { margin: 0 !important; line-height: 1.5 !important; }
+.leaflet-popup-tip-container { display: none !important; }
+.leaflet-popup-close-button {
+  color: var(--color-text-muted) !important;
+  font-size: 18px !important;
+  top: 8px !important; right: 10px !important;
+  line-height: 1 !important; padding: 0 !important;
+  width: 20px !important; height: 20px !important;
+  display: flex !important; align-items: center !important; justify-content: center !important;
 }
-.sidebar-scroll::-webkit-scrollbar-track {
-  background: transparent;
+.leaflet-popup-close-button:hover { color: var(--color-ink) !important; background: transparent !important; }
+.leaflet-control-zoom {
+  border: 1px solid var(--color-border) !important;
+  border-radius: 8px !important;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm) !important;
+}
+.leaflet-control-zoom a {
+  background-color: var(--color-surface) !important;
+  color: var(--color-accent) !important;
+  border-bottom: 1px solid var(--color-border) !important;
+  width: 28px !important; height: 28px !important;
+  line-height: 28px !important;
+  font-size: 16px !important; font-weight: 500 !important;
+}
+.leaflet-control-zoom a:hover {
+  background-color: var(--color-surface-sunken) !important;
+  color: var(--color-accent-hover) !important;
+}
+.leaflet-control-zoom-out { border-bottom: none !important; }
+.custom-leaflet-marker { background: none !important; border: none !important; }
+.leaflet-popup a { color: var(--color-accent); text-decoration: none; }
+
+/* =============================================================================
+ * Select dropdowns
+ * =============================================================================*/
+select option { background-color: var(--color-surface); color: var(--color-ink); }
+
+/* =============================================================================
+ * Sidebar scroll
+ * =============================================================================*/
+.sidebar-scroll::-webkit-scrollbar { width: 3px; }
+.sidebar-scroll::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 3px; }
+.sidebar-scroll::-webkit-scrollbar-track { background: transparent; }
+
+/* =============================================================================
+ * Animations
+ * =============================================================================*/
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in { animation: fade-in 0.25s cubic-bezier(0.22, 1, 0.36, 1); }
+
+@keyframes slide-up {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-slide-up { animation: slide-up 0.35s cubic-bezier(0.22, 1, 0.36, 1); }
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.55; transform: scale(0.72); }
+}
+.animate-pulse { animation: pulse-dot 2s ease-in-out infinite; }
+
+@keyframes scale-in {
+  from { opacity: 0; transform: scale(0.96); }
+  to   { opacity: 1; transform: scale(1); }
+}
+.animate-scale-in { animation: scale-in 0.25s cubic-bezier(0.22, 1, 0.36, 1); }
+
+@keyframes loading-bar {
+  from { width: 0%; }
+  to   { width: 100%; }
+}
+.splash-loading-bar { animation: loading-bar 2.2s ease-in-out forwards; }
+
+@keyframes fade-out {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+.animate-fade-out { animation: fade-out 0.35s ease-in forwards; }
+
+/* =============================================================================
+ * Line clamp utilities
+ * =============================================================================*/
+.line-clamp-1 {
+  display: -webkit-box; -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical; overflow: hidden;
+}
+.line-clamp-2 {
+  display: -webkit-box; -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical; overflow: hidden;
 }
 
 /* =============================================================================
- * Landing Page Light/Beige Theme Scope
- * ========================================================================== */
-.landing-page {
-  background-color: #FFFFFF;
-  color: #1E293B; /* slate-800 */
-}
-.landing-page .bg-surface {
-  background-color: #F8FAFC; /* slate-50 */
-}
-.landing-page .accent-beige {
-  background-color: #F5F0E8;
-}
-.landing-page .sand-texture {
-  background-image: radial-gradient(#E2E8F0 1px, transparent 1px);
-  background-size: 20px 20px;
-}
+ * Landing page
+ * =============================================================================*/
+.landing-page { background-color: transparent; color: #F6EEE1; }
 
 /* =============================================================================
- * Splash Screen & Animations
- * ========================================================================== */
+ * Splash screen
+ * =============================================================================*/
+/* =============================================================================
+ * Splash screen
+ * =============================================================================*/
 .splash-screen {
-  position: fixed;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background-color: #07111F;
+  position: fixed; inset: 0;
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  background-color: var(--color-bg);
   z-index: 9999;
 }
 
-@keyframes scale-in {
-  from { opacity: 0; transform: scale(0.95); }
-  to { opacity: 1; transform: scale(1); }
+/* =============================================================================
+ * Tooltip System (Item 10)
+ * Usage:
+ *   <div class="tooltip-wrap">
+ *     <button>...</button>
+ *     <span class="tooltip-text">Tooltip copy here</span>
+ *   </div>
+ *
+ * Or for simple elements, use data-tooltip attribute directly.
+ * =============================================================================*/
+.tooltip-wrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
 }
 
-.animate-scale-in {
-  animation: scale-in 0.3s ease-out;
+.tooltip-text {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  background: #22190F;
+  color: #F6EEE1;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.4;
+  padding: 5px 10px;
+  border-radius: 7px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.18s ease, transform 0.18s ease;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(34,25,15,0.18);
+  /* arrow */
+}
+.tooltip-text::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 5px solid transparent;
+  border-top-color: #22190F;
 }
 
-/* Splash loading bar animation */
-@keyframes loading-bar {
-  from { width: 0%; }
-  to { width: 100%; }
+/* Show on hover or focus-within */
+.tooltip-wrap:hover .tooltip-text,
+.tooltip-wrap:focus-within .tooltip-text {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+  transition-delay: 0.25s;
 }
 
-.splash-loading-bar {
-  animation: loading-bar 2.2s ease-in-out forwards;
+/* Tooltip below variant */
+.tooltip-text.tooltip-below {
+  bottom: auto;
+  top: calc(100% + 8px);
+  transform: translateX(-50%) translateY(-4px);
 }
-
-/* Fade out for splash transition */
-@keyframes fade-out {
-  from { opacity: 1; }
-  to { opacity: 0; }
+.tooltip-text.tooltip-below::after {
+  top: auto;
+  bottom: 100%;
+  border-top-color: transparent;
+  border-bottom-color: #22190F;
 }
-
-.animate-fade-out {
-  animation: fade-out 0.4s ease-in forwards;
+.tooltip-wrap:hover .tooltip-text.tooltip-below,
+.tooltip-wrap:focus-within .tooltip-text.tooltip-below {
+  transform: translateX(-50%) translateY(0);
 }

@@ -73,36 +73,65 @@ export default function Profile() {
     }
   };
 
+  // ── Shared input style ──
+  const inputStyle = {
+    background: '#FBF6EE',
+    border: '1px solid #DCC9B2',
+    color: '#3A2A20',
+    outline: 'none',
+  };
+  const handleFocus = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) => {
+    e.currentTarget.style.borderColor = '#A67C5A';
+    e.currentTarget.style.boxShadow = '0 0 0 3px rgba(166,124,90,0.12)';
+  };
+  const handleBlur = (e: React.FocusEvent<HTMLInputElement | HTMLSelectElement>) => {
+    e.currentTarget.style.borderColor = '#DCC9B2';
+    e.currentTarget.style.boxShadow = 'none';
+  };
+
   if (isLoading) {
     return (
-      <div className="max-w-2xl mx-auto space-y-6 animate-pulse pb-12">
-        <div className="h-10 w-48 bg-[#0D1B2A] rounded-xl" />
-        <div className="bg-[#0D1B2A] h-96 rounded-2xl border border-[#20364A]" />
+      <div className="w-full max-w-2xl space-y-6 animate-pulse pb-12">
+        <div className="h-10 w-48 rounded-xl" style={{ background: '#DCC9B2' }} />
+        <div className="h-96 rounded-2xl" style={{ background: '#DCC9B2', border: '1px solid #DCC9B2' }} />
       </div>
     );
   }
 
   return (
-    <div className="max-w-2xl mx-auto animate-fade-in pb-12 space-y-8">
+    <div className="w-full max-w-3xl animate-fade-in pb-16 space-y-10">
       <div>
-        <h1 className="text-3xl font-bold text-white flex items-center gap-3 mb-2">
-          <User className="w-8 h-8 text-cyan-400" />
+        <h1 className="text-3xl font-bold flex items-center gap-3 mb-2" style={{ fontFamily: "'Playfair Display', serif", color: '#3A2A20' }}>
+          <User className="w-8 h-8" style={{ color: '#A67C5A' }} />
           My Profile
         </h1>
-        <p className="text-slate-400">
+        <p style={{ color: '#6B4F3E' }}>
           Manage your account details and beach safety preferences.
         </p>
       </div>
 
-      <div className="bg-[#0D1B2A] border border-[#20364A] rounded-2xl shadow-xl shadow-black/20">
-        <div className="p-8 border-b border-[#20364A] flex items-center gap-5">
-          <div className="w-16 h-16 rounded-full bg-cyan-500/20 flex items-center justify-center text-2xl font-bold text-cyan-400">
+      <div className="rounded-2xl shadow-md overflow-hidden" style={{ background: '#FFFFFF', border: '1px solid #DCC9B2' }}>
+        {/* Avatar header */}
+        <div
+          className="p-8 flex items-center gap-5"
+          style={{
+            borderBottom: '1px solid #DCC9B2',
+            background: 'linear-gradient(135deg, #3A2A20 0%, #5A3E2E 100%)',
+          }}
+        >
+          <div
+            className="w-16 h-16 rounded-full flex items-center justify-center text-2xl font-bold"
+            style={{ background: 'rgba(255,255,255,0.12)', color: '#F2DEC0', border: '1px solid rgba(255,255,255,0.2)' }}
+          >
             {(user?.name || name || '?')[0].toUpperCase()}
           </div>
           <div>
-            <h2 className="text-xl font-bold text-white">{user?.name || name}</h2>
-            <p className="text-slate-400 text-sm">{user?.email || email}</p>
-            <span className="inline-block mt-1 px-2 py-0.5 bg-cyan-500/15 text-cyan-400 rounded text-xs font-bold uppercase">
+            <h2 className="text-xl font-bold" style={{ color: '#FDFAF6' }}>{user?.name || name}</h2>
+            <p className="text-sm" style={{ color: 'rgba(253,250,246,0.65)' }}>{user?.email || email}</p>
+            <span
+              className="inline-block mt-1 px-2 py-0.5 rounded text-xs font-bold uppercase"
+              style={{ background: 'rgba(255,255,255,0.15)', color: '#F2DEC0' }}
+            >
               {user?.role || 'USER'}
             </span>
           </div>
@@ -110,116 +139,88 @@ export default function Profile() {
 
         <div className="p-8">
           {saved && (
-            <div className="mb-6 p-3.5 bg-emerald-500/10 border border-emerald-500/25 rounded-xl text-emerald-400 text-sm flex items-center gap-2">
+            <div className="mb-6 p-3.5 rounded-xl text-sm flex items-center gap-2" style={{ background: 'rgba(124,153,134,0.10)', border: '1px solid rgba(124,153,134,0.30)', color: '#4C8B6F' }}>
               <CheckCircle className="w-4 h-4" />
               Profile updated successfully!
             </div>
           )}
           {error && (
-            <div className="mb-6 p-3.5 bg-red-500/10 border border-red-500/25 rounded-xl text-red-400 text-sm">
+            <div className="mb-6 p-3.5 rounded-xl text-sm" style={{ background: 'rgba(89,125,138,0.08)', border: '1px solid rgba(89,125,138,0.3)', color: '#3D6070' }}>
               {error}
             </div>
           )}
 
-          <form onSubmit={handleSave} className="space-y-5">
+          <form onSubmit={handleSave} className="space-y-6">
+            {/* Full Name */}
             <div>
-              <label htmlFor="profile-name" className="block text-sm font-medium text-slate-300 mb-2">
+              <label htmlFor="profile-name" className="block text-sm font-medium mb-2" style={{ color: '#3A2A20' }}>
                 Full Name
               </label>
               <div className="relative">
-                <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
+                <User className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5" style={{ color: '#A67C5A' }} />
                 <input
                   id="profile-name"
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 bg-[#13263A] border border-[#20364A] rounded-xl text-white placeholder-slate-500
-                    focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/25 transition-colors text-sm"
+                  className="w-full pl-10 pr-4 py-3 rounded-xl transition-all text-sm"
+                  style={inputStyle}
+                  onFocus={handleFocus}
+                  onBlur={handleBlur}
                 />
               </div>
             </div>
 
+            {/* Email (read-only) */}
             <div>
-              <label htmlFor="profile-email" className="block text-sm font-medium text-slate-300 mb-2">
-                Email <span className="text-slate-500">(cannot be changed)</span>
+              <label htmlFor="profile-email" className="block text-sm font-medium mb-2" style={{ color: '#3A2A20' }}>
+                Email <span style={{ color: '#A08070' }}>(cannot be changed)</span>
               </label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5" style={{ color: '#A08070' }} />
                 <input
                   id="profile-email"
                   type="email"
                   value={email}
                   disabled
-                  className="w-full pl-10 pr-4 py-3 bg-[#13263A]/50 border border-[#20364A] rounded-xl text-slate-500
-                    cursor-not-allowed text-sm"
+                  className="w-full pl-10 pr-4 py-3 rounded-xl text-sm cursor-not-allowed"
+                  style={{ background: '#F3EDE4', border: '1px solid #DCC9B2', color: '#A08070', outline: 'none' }}
                 />
               </div>
             </div>
 
-            <div>
-              <label htmlFor="profile-location" className="block text-sm font-medium text-slate-300 mb-2">
-                Preferred Location
-              </label>
-              <div className="relative">
-                <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
-                <input
-                  id="profile-location"
-                  type="text"
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
-                  placeholder="e.g., North Goa, India"
-                  className="w-full pl-10 pr-4 py-3 bg-[#13263A] border border-[#20364A] rounded-xl text-white placeholder-slate-500
-                    focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/25 transition-colors text-sm"
-                />
-              </div>
-            </div>
 
-            <div>
-              <label htmlFor="profile-activity" className="block text-sm font-medium text-slate-300 mb-2">
-                Preferred Activity
-              </label>
-              <div className="relative">
-                <Activity className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
-                <select
-                  id="profile-activity"
-                  value={preferredActivity}
-                  onChange={(e) => setPreferredActivity(e.target.value)}
-                  className="w-full pl-10 pr-4 py-3 bg-[#13263A] border border-[#20364A] rounded-xl text-white
-                    focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/25 transition-colors text-sm appearance-none"
-                >
-                  <option value="">Select your preferred activity</option>
-                  <option value="swimming">Swimming</option>
-                  <option value="surfing">Surfing</option>
-                  <option value="fishing">Fishing</option>
-                  <option value="diving">Diving</option>
-                </select>
-              </div>
-            </div>
 
+            {/* Emergency Contact */}
             <div>
-              <label htmlFor="profile-emergency" className="block text-sm font-medium text-slate-300 mb-2">
+              <label htmlFor="profile-emergency" className="block text-sm font-medium mb-2" style={{ color: '#3A2A20' }}>
                 Emergency Contact
               </label>
               <div className="relative">
-                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" />
+                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5" style={{ color: '#A67C5A' }} />
                 <input
                   id="profile-emergency"
                   type="tel"
                   value={emergencyContact}
                   onChange={(e) => setEmergencyContact(e.target.value)}
                   placeholder="+91 98765 43210"
-                  className="w-full pl-10 pr-4 py-3 bg-[#13263A] border border-[#20364A] rounded-xl text-white placeholder-slate-500
-                    focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/25 transition-colors text-sm"
+                  className="w-full pl-10 pr-4 py-3 rounded-xl transition-all text-sm"
+                  style={inputStyle}
+                  onFocus={handleFocus}
+                  onBlur={handleBlur}
                 />
               </div>
             </div>
 
+            {/* Save */}
+            <div className="pt-2">
             <button
               type="submit"
               disabled={isSaving}
-              className="w-full py-3.5 bg-cyan-500 hover:bg-cyan-400 disabled:bg-cyan-500/50
-                text-[#07111F] font-semibold rounded-xl transition-all duration-200
-                disabled:cursor-not-allowed text-sm flex items-center justify-center gap-2"
+              className="w-full py-3.5 text-white font-semibold rounded-xl transition-all disabled:cursor-not-allowed text-sm flex items-center justify-center gap-2"
+              style={{ background: isSaving ? '#C9A984' : '#A67C5A' }}
+              onMouseEnter={e => { if (!isSaving) (e.currentTarget as HTMLButtonElement).style.background = '#8C6647'; }}
+              onMouseLeave={e => { if (!isSaving) (e.currentTarget as HTMLButtonElement).style.background = '#A67C5A'; }}
             >
               {isSaving ? (
                 <>
@@ -233,14 +234,18 @@ export default function Profile() {
                 </>
               )}
             </button>
+            </div>
           </form>
         </div>
 
-        <div className="px-8 py-5 border-t border-[#20364A]">
+        {/* Sign out */}
+        <div className="px-8 py-5" style={{ borderTop: '1px solid #DCC9B2' }}>
           <button
             onClick={logout}
-            className="w-full py-3 bg-red-500/10 border border-red-500/25 text-red-400 font-medium rounded-xl
-              hover:bg-red-500/20 transition-colors text-sm flex items-center justify-center gap-2"
+            className="w-full py-3 font-medium rounded-xl transition-colors text-sm flex items-center justify-center gap-2"
+            style={{ background: 'rgba(89,125,138,0.08)', border: '1px solid rgba(89,125,138,0.3)', color: '#3D6070' }}
+            onMouseEnter={e => { (e.currentTarget as HTMLButtonElement).style.background = 'rgba(89,125,138,0.15)'; }}
+            onMouseLeave={e => { (e.currentTarget as HTMLButtonElement).style.background = 'rgba(89,125,138,0.08)'; }}
           >
             <LogOut className="w-4 h-4" />
             Sign Out
@@ -250,48 +255,57 @@ export default function Profile() {
 
       {/* MY REPORTS SECTION */}
       <div>
-        <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-          <FileText className="w-5 h-5 text-cyan-400" /> My Reports
+        <h2 className="text-xl font-bold mb-4 flex items-center gap-2" style={{ color: '#3A2A20' }}>
+          <FileText className="w-5 h-5" style={{ color: '#A67C5A' }} /> My Reports
         </h2>
         
         {isLoadingReports ? (
-           <div className="h-32 bg-[#0D1B2A] rounded-2xl border border-[#20364A] animate-pulse" />
+          <div className="h-32 rounded-2xl animate-pulse" style={{ background: '#DCC9B2', border: '1px solid #DCC9B2' }} />
         ) : reports.length === 0 ? (
-          <div className="bg-[#0D1B2A] border border-[#20364A] rounded-2xl p-8 text-center">
-            <p className="text-slate-400 mb-4">You haven't submitted any reports yet.</p>
-            <Link to="/report" className="inline-flex items-center justify-center px-6 py-2.5 bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 rounded-xl hover:bg-cyan-500/20 transition-colors text-sm font-medium">
+          <div className="rounded-2xl p-8 text-center" style={{ background: '#FBF6EE', border: '1px solid #DCC9B2' }}>
+            <p className="mb-4" style={{ color: '#6B4F3E' }}>You haven't submitted any reports yet.</p>
+            <Link
+              to="/report"
+              className="inline-flex items-center justify-center px-6 py-2.5 rounded-xl transition-colors text-sm font-medium"
+              style={{ background: 'rgba(166,124,90,0.1)', color: '#A67C5A', border: '1px solid rgba(166,124,90,0.3)' }}
+            >
               Report an Issue
             </Link>
           </div>
         ) : (
-          <div className="bg-[#0D1B2A] border border-[#20364A] rounded-2xl overflow-hidden">
+          <div className="rounded-2xl overflow-hidden" style={{ background: '#FFFFFF', border: '1px solid #DCC9B2' }}>
             <div className="overflow-x-auto">
               <table className="w-full text-left text-sm whitespace-nowrap">
-                <thead className="bg-[#13263A] text-slate-300">
+                <thead style={{ background: '#FBF6EE' }}>
                   <tr>
-                    <th className="px-6 py-4 font-medium">ID</th>
-                    <th className="px-6 py-4 font-medium">Type</th>
-                    <th className="px-6 py-4 font-medium">Beach</th>
-                    <th className="px-6 py-4 font-medium">Status</th>
-                    <th className="px-6 py-4 font-medium">Date</th>
+                    <th className="px-6 py-4 font-medium" style={{ color: '#6B4F3E' }}>ID</th>
+                    <th className="px-6 py-4 font-medium" style={{ color: '#6B4F3E' }}>Type</th>
+                    <th className="px-6 py-4 font-medium" style={{ color: '#6B4F3E' }}>Beach</th>
+                    <th className="px-6 py-4 font-medium" style={{ color: '#6B4F3E' }}>Status</th>
+                    <th className="px-6 py-4 font-medium" style={{ color: '#6B4F3E' }}>Date</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-[#20364A]">
+                <tbody>
                   {reports.map((report) => (
-                    <tr key={report.id} className="hover:bg-[#13263A]/50 transition-colors">
-                      <td className="px-6 py-4 text-slate-400">#{report.id}</td>
-                      <td className="px-6 py-4 text-white capitalize">{report.issue_type.replace('_', ' ')}</td>
-                      <td className="px-6 py-4 text-slate-300">{report.beach_name || `Beach #${report.beach_id}`}</td>
+                    <tr
+                      key={report.id}
+                      style={{ borderTop: '1px solid #DCC9B2' }}
+                      onMouseEnter={e => (e.currentTarget as HTMLTableRowElement).style.background = '#FBF6EE'}
+                      onMouseLeave={e => (e.currentTarget as HTMLTableRowElement).style.background = ''}
+                    >
+                      <td className="px-6 py-4" style={{ color: '#A08070' }}>#{report.id}</td>
+                      <td className="px-6 py-4 capitalize" style={{ color: '#3A2A20' }}>{report.issue_type.replace('_', ' ')}</td>
+                      <td className="px-6 py-4" style={{ color: '#6B4F3E' }}>{report.beach_name || `Beach #${report.beach_id}`}</td>
                       <td className="px-6 py-4">
                         <span className={`px-2.5 py-1 rounded text-xs font-bold uppercase ${
-                          report.status === 'PENDING' ? 'bg-amber-500/15 text-amber-400' :
-                          report.status === 'VERIFIED' ? 'bg-emerald-500/15 text-emerald-400' :
-                          'bg-red-500/15 text-red-400'
+                          report.status === 'PENDING'  ? 'bg-amber-50 text-amber-600' :
+                          report.status === 'VERIFIED' ? 'bg-emerald-50 text-emerald-600' :
+                          'bg-[rgba(89,125,138,0.08)] text-[#3D6070]'
                         }`}>
                           {report.status}
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-slate-400 flex items-center gap-1">
+                      <td className="px-6 py-4 flex items-center gap-1" style={{ color: '#A08070' }}>
                         <Clock className="w-3.5 h-3.5" />
                         {timeAgo(report.created_at)}
                       </td>

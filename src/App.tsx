@@ -34,7 +34,7 @@ function ProtectedRoute({
     return <Navigate to="/login" replace />;
   }
 
-  if (requiredRole && user?.role !== requiredRole) {
+  if (requiredRole && user?.role?.toUpperCase() !== requiredRole.toUpperCase()) {
     return <Navigate to="/dashboard" replace />;
   }
 
@@ -47,10 +47,10 @@ export default function App() {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-[#07111F] flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center" style={{ background: '#F3E8D9' }}>
         <div className="flex flex-col items-center gap-3">
-          <div className="w-8 h-8 border-2 border-cyan-400 border-t-transparent rounded-full animate-spin" />
-          <p className="text-slate-400 text-sm">Loading Kinaara...</p>
+          <div className="w-8 h-8 border-2 border-t-transparent rounded-full animate-spin" style={{ borderColor: '#A67C5A', borderTopColor: 'transparent' }} />
+          <p className="text-sm" style={{ color: '#6B4F3E' }}>Loading Kinaara...</p>
         </div>
       </div>
     );
@@ -75,16 +75,7 @@ export default function App() {
       <Route path="/alerts/:id" element={<Layout><AlertDetail /></Layout>} />
 
       {/* PROTECTED ROUTES WITH LAYOUT */}
-      <Route
-        path="/report"
-        element={
-          <Layout>
-            <ProtectedRoute>
-              <Report />
-            </ProtectedRoute>
-          </Layout>
-        }
-      />
+      <Route path="/report" element={<Layout><Report /></Layout>} />
       <Route
         path="/profile"
         element={

@@ -24,8 +24,6 @@ export const BSIGauge: React.FC<BSIGaugeProps> = ({
   const strokeDashoffset = circumference - (score / 100) * circumference;
 
   const colorClass = getStatusColor(status);
-  // Extract just the hex/tailwind color part for SVG stroke if possible, 
-  // but using currentColor with text-color class is safer in Tailwind.
 
   return (
     <div className={`flex flex-col items-center justify-center ${isLg ? 'w-48' : 'w-28'}`}>
@@ -36,7 +34,7 @@ export const BSIGauge: React.FC<BSIGaugeProps> = ({
           className="transform -rotate-90"
         >
           <circle
-            stroke="#20364A" // var(--color-ts-border)
+            stroke="#DCC9B2"
             fill="transparent"
             strokeWidth={stroke}
             r={normalizedRadius}
@@ -57,7 +55,7 @@ export const BSIGauge: React.FC<BSIGaugeProps> = ({
           />
         </svg>
         <div className="absolute flex flex-col items-center justify-center">
-          <span className={`font-bold text-white ${isLg ? 'text-4xl' : 'text-xl'}`}>
+          <span className={`font-bold ${isLg ? 'text-4xl' : 'text-xl'}`} style={{ color: '#3A2A20' }}>
             {score}
           </span>
           <span className={`uppercase font-semibold tracking-wider ${colorClass} ${isLg ? 'text-sm' : 'text-[10px]'}`}>
@@ -67,8 +65,8 @@ export const BSIGauge: React.FC<BSIGaugeProps> = ({
       </div>
       {(label || lastUpdated) && (
         <div className="mt-4 text-center">
-          {label && <div className="text-slate-300 text-sm font-medium">{label}</div>}
-          {lastUpdated && <div className="text-slate-500 text-xs mt-1">Updated {lastUpdated}</div>}
+          {label && <div className="text-sm font-medium" style={{ color: '#6B4F3E' }}>{label}</div>}
+          {lastUpdated && <div className="text-xs mt-1" style={{ color: '#A08070' }}>Updated {lastUpdated}</div>}
         </div>
       )}
     </div>

@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { Navigation } from 'lucide-react';
 
 interface SplashScreenProps {
   onFinish: () => void;
@@ -10,8 +9,7 @@ export default function SplashScreen({ onFinish }: SplashScreenProps) {
   const [fading, setFading] = useState(false);
 
   useEffect(() => {
-    // Animate progress bar
-    const duration = 2000;
+    const duration = 2200;
     const intervalTime = 20;
     const steps = duration / intervalTime;
     let currentStep = 0;
@@ -19,19 +17,11 @@ export default function SplashScreen({ onFinish }: SplashScreenProps) {
     const interval = setInterval(() => {
       currentStep++;
       setProgress((currentStep / steps) * 100);
-      if (currentStep >= steps) {
-        clearInterval(interval);
-      }
+      if (currentStep >= steps) clearInterval(interval);
     }, intervalTime);
 
-    // Fade out and finish
-    const fadeTimer = setTimeout(() => {
-      setFading(true);
-    }, 2200);
-
-    const finishTimer = setTimeout(() => {
-      onFinish();
-    }, 2500);
+    const fadeTimer = setTimeout(() => setFading(true), 2400);
+    const finishTimer = setTimeout(() => onFinish(), 2750);
 
     return () => {
       clearInterval(interval);
@@ -41,29 +31,41 @@ export default function SplashScreen({ onFinish }: SplashScreenProps) {
   }, [onFinish]);
 
   return (
-    <div 
-      className={`fixed inset-0 bg-[#07111F] z-50 flex flex-col items-center justify-center transition-opacity duration-300 ${
+    <div
+      className={`fixed inset-0 z-50 flex flex-col items-center justify-center transition-opacity duration-400 ${
         fading ? 'opacity-0' : 'opacity-100'
       }`}
+      style={{
+        /* Warm off-white paper texture background */
+        backgroundColor: '#F3E8D9',
+        backgroundImage: `
+          url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='400' height='400'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E")
+        `,
+        backgroundSize: '400px 400px',
+      }}
     >
-      <div className="flex flex-col items-center gap-6">
-        <div className="flex items-center gap-3">
-          <Navigation className="w-12 h-12 text-cyan-400 drop-shadow-[0_0_15px_rgba(34,211,238,0.5)]" />
-          <h1 className="text-5xl font-bold text-white tracking-tight drop-shadow-md">
-            Kinaara
-          </h1>
-        </div>
-        
-        <p className="text-slate-400 text-lg tracking-wide uppercase font-medium">
-          Coastal Safety Intelligence
-        </p>
+      <div className="flex flex-col items-center gap-0">
 
-        <div className="w-64 h-1 bg-[#13263A] rounded-full overflow-hidden mt-8">
-          <div 
-            className="h-full bg-gradient-to-r from-cyan-400 to-teal-400 rounded-full transition-all duration-75 ease-linear"
-            style={{ width: `${progress}%` }}
+        {/* Logo — transparent directly on light bg */}
+        <img
+          src="/logo.png"
+          alt="Kinaara"
+          className="h-36 md:h-44 w-auto object-contain select-none"
+          style={{ mixBlendMode: 'multiply' }}
+          draggable={false}
+        />
+
+        {/* Loading bar */}
+        <div className="mt-10 w-56 h-[3px] rounded-full overflow-hidden" style={{ background: '#E0D8CC' }}>
+          <div
+            className="h-full rounded-full transition-all duration-75 ease-linear"
+            style={{
+              width: `${progress}%`,
+              background: 'linear-gradient(to right, #C2905A, #A67C5A)',
+            }}
           />
         </div>
+
       </div>
     </div>
   );
