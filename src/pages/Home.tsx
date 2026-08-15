@@ -388,31 +388,7 @@ export default function Home() {
 
         {/* Search + Notification */}
         <div className="flex items-center gap-3 shrink-0 pt-1">
-          {isDashboard && (
-            <div className="relative w-[380px]">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4" style={{ color: '#A08070' }} />
-              <input
-                type="text"
-                placeholder="Search beaches by name or location..."
-                value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-10 py-3 rounded-full text-sm transition-all"
-                style={{
-                  background: '#FFFFFF',
-                  border: '1px solid #DCC9B2',
-                  color: '#3A2A20',
-                  outline: 'none',
-                }}
-                onFocus={e => { e.currentTarget.style.borderColor = '#A67C5A'; e.currentTarget.style.boxShadow = '0 0 0 3px rgba(166,124,90,0.1)'; }}
-                onBlur={e => { e.currentTarget.style.borderColor = '#DCC9B2'; e.currentTarget.style.boxShadow = 'none'; }}
-              />
-              {searchQuery && (
-                <button onClick={() => setSearchQuery('')} className="absolute right-4 top-1/2 -translate-y-1/2">
-                  <X className="w-3.5 h-3.5" style={{ color: '#A08070' }} />
-                </button>
-              )}
-            </div>
-          )}
+
 
           {/* Notification Bell */}
           <div ref={notifRef} className="relative">
@@ -718,43 +694,7 @@ export default function Home() {
           })}
         </div>
 
-        {/* Coastal Conditions strip */}
-        <div className="rounded-2xl px-5 py-3 flex items-center gap-6" style={{ background: '#FFFFFF', border: '1px solid #DCC9B2' }}>
-          <div className="flex items-center gap-2">
-            <Waves className="w-4 h-4" style={{ color: '#6E93A6' }} />
-            <div>
-              <p className="text-[9px] uppercase tracking-widest font-semibold" style={{ color: '#A08070' }}>Coastal Conditions</p>
-            </div>
-          </div>
-          <div className="w-px h-6" style={{ background: '#DCC9B2' }} />
-          <div className="flex items-center gap-5">
-            <div className="text-center">
-              <div className="flex items-center gap-1 mb-0.5">
-                <Wind className="w-3 h-3" style={{ color: '#A67C5A' }} />
-                <p className="text-[9px] uppercase tracking-widest" style={{ color: '#A08070' }}>Wind Speed</p>
-              </div>
-              <p className="text-sm font-bold" style={{ color: '#3A2A20' }}>18 km/h</p>
-            </div>
-            <div className="text-center">
-              <div className="flex items-center gap-1 mb-0.5">
-                <Waves className="w-3 h-3" style={{ color: '#A67C5A' }} />
-                <p className="text-[9px] uppercase tracking-widest" style={{ color: '#A08070' }}>Wave Height</p>
-              </div>
-              <p className="text-sm font-bold" style={{ color: '#3A2A20' }}>1.2 m</p>
-            </div>
-            <div className="text-center">
-              <div className="flex items-center gap-1 mb-0.5">
-                <ArrowUpRight className="w-3 h-3" style={{ color: '#A67C5A' }} />
-                <p className="text-[9px] uppercase tracking-widest" style={{ color: '#A08070' }}>Tide Status</p>
-              </div>
-              <p className="text-sm font-bold" style={{ color: '#3A2A20' }}>Rising</p>
-            </div>
-          </div>
-          <div className="w-px h-6" style={{ background: '#DCC9B2' }} />
-          <button className="flex items-center gap-1 text-xs font-medium transition-colors whitespace-nowrap" style={{ color: '#A67C5A' }}>
-            View Details <ChevronRight className="w-3 h-3" />
-          </button>
-        </div>
+
         </div>
         </div>
       )}
