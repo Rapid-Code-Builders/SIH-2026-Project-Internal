@@ -50,6 +50,8 @@ export interface Beach {
   heroImage?: string;
   /** Array of photo URLs for the Pinterest bento gallery on the detail page. */
   gallery?: string[];
+  /** List of activities available at the beach (e.g. swimming, surfing, fishing). */
+  activities?: string[];
 }
 
 /**
