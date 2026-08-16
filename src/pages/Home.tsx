@@ -11,8 +11,6 @@ import {
   Waves,
   Droplets,
   RefreshCw,
-  Wind,
-  ArrowUpRight,
   X,
   Maximize2,
   Minimize2,
